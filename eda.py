@@ -21,7 +21,6 @@ args.enhanceparam = 10.0
 
 def get_train(): #train data 불러오기
     train_folder = glob(args.base_dir + 'train/*')
-    print(train_folder)
     train_path = []
     for folder in train_folder:
         tmp = glob(folder + '/*')
@@ -39,10 +38,10 @@ def get_test(): #테스트 데이터 불러오기
     print(test_path)
     return None
 
-def process_image(im): #image를 인풋으로 받아 각종 필터 적용 후 이미지 리턴
-    im.resize((args.imsize, args.imsize))
+def process_image(im, imsize, enhanceparam): #image를 인풋으로 받아 각종 필터 적용 후 이미지 리턴
+    im = im.resize((imsize, imsize))
     enhancer = ImageEnhance.Sharpness(im)
-    im = enhancer.enhance(args.enhanceparam)
+    im = enhancer.enhance(enhanceparam)
     im = im.filter(ImageFilter.BLUR)
     im = im.filter(ImageFilter.DETAIL)
     im = im.filter(ImageFilter.EDGE_ENHANCE)
@@ -52,8 +51,6 @@ def enhance_data():
 
     return None
 
-def save_result(image):
-
+def save_result(im, n, label): #각각의 파일 읽어오기
+    im = im.save(args.base_dir+'_processed_train/'+f'{n}_{label}.png')
     return None
-
-train_df , args.encoder = get_train()
