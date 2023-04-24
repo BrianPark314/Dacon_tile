@@ -32,4 +32,8 @@ def __main__():
     print('='*50)
     return None
 
+def __check__():
+
+    return None
+
 __main__()
