@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
-
+from customImageFolder import ImageFolderCustom as ifc
+import matplotlib.pyplot as plt
 from PIL import Image
 from tqdm import tqdm
 import random
@@ -9,24 +10,30 @@ import eda
 import time
 import easydict
 import gc
+from torchvision import transforms
+
 
 args = easydict.EasyDict()
 args.base_dir = './data/'
+args.train_dir = args.base_dir +'train/'
 args.encoder = {}
 args.imsize = 256
 args.enhanceparam = 10.0
+args.sharpnessfactor = 1.5
 
 def __main__():
     start = time.time()
     print('='*50)
-    train_df , encoder = eda.get_train()
+    train_data_custom = ifc(targ_dir=args.train_dir)
     print('Data load complete!')
     print('Now processing image...')
-    for i in tqdm(range(len(train_df))):
-        im = Image.open(train_df.loc[i, 'path'])
+    
+    for i in tqdm(range(len(train_data_custom))):
+        im, label = train_data_custom.load_image(i)
         im = eda.process_image(im, args.imsize, args.enhanceparam)
-        eda.save_result(im, i, encoder[train_df.loc[i,'label']])
+        eda.save_result(im, i, train_data_custom.class_to_idx[label])
         gc.collect()
+
     end = time.time()
     print(f'Run complete in {np.round(end-start, 3)} seconds!')
     print('='*50)
