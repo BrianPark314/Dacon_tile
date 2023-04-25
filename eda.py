@@ -1,18 +1,15 @@
-import os
 from glob import glob
 import pandas as pd
 import numpy as np
 import seaborn as sns
-import pickle
 import easydict
 from PIL import ImageFilter 
 from PIL import ImageEnhance
+import time
 
 from PIL import Image
 from PIL import ImageOps
 from tqdm import tqdm
-import random
-import cv2
 
 args = easydict.EasyDict()
 args.base_dir = './data/'
@@ -33,11 +30,6 @@ def get_train(): #train data 불러오기
     number = list(range(len(labels)))
     encoder = dict(zip(labels, number))
     return train_df, encoder #train data의 path와 label이 담긴 dataframe과 인코더 반환
-
-def get_test(): #테스트 데이터 불러오기
-    test_path = glob(args.base_dir + 'test/')
-    print(test_path)
-    return None
 
 def process_image(im, imsize, enhanceparam): #image를 인풋으로 받아 각종 필터 적용 후 이미지 리턴
     im = square_pad(im)
