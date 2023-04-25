@@ -14,9 +14,8 @@ import gc
 from torchvision import transforms
 from pathlib import Path
 
-
 args = easydict.EasyDict()
-args.base_dir = Path('./data/')
+args.base_dir = str(Path('data/'))+'/'
 args.train_dir = args.base_dir +'train/'
 args.encoder = {}
 args.imsize = 256
@@ -45,11 +44,15 @@ def process_test(imsize, enhanceparam): #테스트 데이터 준비
     start = time.time()
     print('='*50 + '\n')
     print('Now processing test data...' + '\n')
-    test_path = glob(args.base_dir + 'test/*')
-    for x in tqdm(test_path):
+    test_path = args.base_dir + 'test/'
+    for x in tqdm(Path(test_path).iterdir()):
         im = Image.open(x)
-        im = eda.process_image(im, imsize, enhanceparam)
-        name = x.split('/')[-1]
+        im = eda.process_image(im, 256, 10.0)
+        try:
+            name = x.split('/')[-1]
+        except:
+            x = str(x)
+            name = x.split('\\')[-1]
         im.save(args.base_dir+'_processed_test/'+f'{name}')
     end = time.time()
     print(f'Run complete in {int(end-start)} seconds.' + '\n')
