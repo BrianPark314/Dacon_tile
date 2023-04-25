@@ -12,25 +12,26 @@ from PIL import ImageOps
 from tqdm import tqdm
 
 args = easydict.EasyDict()
-args.base_dir = './data/'
+args.base_dir = '.\data\' 
 args.encoder = {}
 args.imsize = 256
 args.enhanceparam = 10.0
 
 def get_train(): #train data 불러오기
-    train_folder = glob(args.base_dir + 'train/*')
+    train_folder = glob(args.base_dir + 'train\*')
     train_path = []
     for folder in train_folder:
-        tmp = glob(folder + '/*')
+        tmp = glob(folder + '\*')
         train_path += tmp
 
     train_df = pd.DataFrame(train_path, columns=['path'])
-    train_df['label'] = train_df['path'].apply(lambda x: x.split('/')[-2])
+    train_df['label'] = train_df['path'].apply(lambda x: x.split('\')[-2])
     labels = train_df.label.unique()
     number = list(range(len(labels)))
     encoder = dict(zip(labels, number))
     return train_df, encoder #train data의 path와 label이 담긴 dataframe과 인코더 반환
-  
+           
+                    
 def augment_data(image):
     '''label별로 증강 함수 적용'''
     return None
@@ -57,5 +58,5 @@ def save_result(im, n, label): #각각의 파일 읽어오기
     im = im.save(args.base_dir+'_processed_train/'+f'{n}_{label}.png')
     return None
 
-
-
+train_df, encoder = get_train()
+print(train_df.value_counts())

@@ -9,29 +9,33 @@ import random
 import cv2
 import eda
 import time
+from pathlib import Path
 import easydict
 import gc
 from torchvision import transforms
 
 
-args = easydict.EasyDict()
-args.base_dir = './data/'
-args.train_dir = args.base_dir +'train/'
-args.encoder = {}
-args.imsize = 256
-args.enhanceparam = 10.0
-args.sharpnessfactor = 1.5
+base_dir = './data/'
+path = Path(base_dir +'train/')
+test_path = Path(base_dir +'test/')
+
+encoder = {}
+imsize = 256
+enhanceparam = 10.0
+sharpnessfactor = 1.5
+
+#def augment_data():
 
 def prep_data():
     start = time.time()
     print('='*50 + '\n')
-    train_data_custom = ifc(targ_dir=args.train_dir) #train 데이터 custom imagefolder 사용해서 로드
+    train_data_custom = ifc(targ_dir=path) #train 데이터 custom imagefolder 사용해서 로드
     print('Train data loaded' + '\n')
     print('Processing Image...' + '\n')
     
     for i in tqdm(range(len(train_data_custom))): #학습 데이터 처리
         im, label = train_data_custom.load_image(i)
-        im = eda.process_image(im, args.imsize, args.enhanceparam)
+        im = eda.process_image(im, imsize, enhanceparam)
         eda.save_result(im, i, train_data_custom.class_to_idx[label])
         gc.collect()
 
@@ -44,7 +48,7 @@ def process_test(imsize, enhanceparam): #테스트 데이터 불러오기
     start = time.time()
     print('='*50 + '\n')
     print('Now processing test data...' + '\n')
-    test_path = glob(args.base_dir + 'test/*')
+    test_path = list(test_path.glob('*.png'))
     for x in tqdm(test_path):
         im = Image.open(x)
         im = eda.process_image(im, imsize, enhanceparam)
@@ -58,14 +62,14 @@ def process_test(imsize, enhanceparam): #테스트 데이터 불러오기
 
 def check():
     train_df, encoder = eda.get_train()
-    processed_train = len(glob(args.base_dir+'_processed_train/*'))
+    processed_train = len(Path(base_dir+'_processed_train/').glob('*'))
     
     if len(train_df) != processed_train: 
         print('Error in processing train data.')
         return None
 
-    processed_test_len = len(glob(args.base_dir+'_processed_test/*'))
-    test_len = len(glob(args.base_dir+'test/*'))
+    processed_test_len = len(Path(base_dir+'_processed_test/').glob('*'))
+    test_len = len(glob(test_path.glob('*')))
 
     if processed_test_len != test_len: 
         print('Error in processing test data.')
@@ -77,7 +81,7 @@ def check():
 if __name__ == '__main__':
     start = time.time()
     #prep_data()
-    process_test(args.imsize, args.enhanceparam)
-    check() 
+    process_test(imsize, enhanceparam)
+    check()
     end = time.time()
     print(f'Total runtime is {int(end-start)} seconds.')
