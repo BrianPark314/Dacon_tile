@@ -22,7 +22,7 @@ args.imsize = 256
 args.enhanceparam = 10.0
 args.sharpnessfactor = 1.5
 
-def prep_data():
+def prep_data(): #train 데이터 준비
     start = time.time()
     print('='*50 + '\n')
     train_data_custom = ifc(targ_dir=args.train_dir) #train 데이터 custom imagefolder 사용해서 로드
@@ -40,7 +40,7 @@ def prep_data():
     print('='*50)
     return None
 
-def process_test(imsize, enhanceparam): #테스트 데이터 불러오기
+def process_test(imsize, enhanceparam): #테스트 데이터 준비
     start = time.time()
     print('='*50 + '\n')
     print('Now processing test data...' + '\n')
@@ -55,7 +55,7 @@ def process_test(imsize, enhanceparam): #테스트 데이터 불러오기
     print('='*50)
     return None
 
-def check():
+def check(): #처리 과정에서 오류가 없었는지 간단하게 확인
     train_df, encoder = eda.get_train()
     processed_train = len(glob(args.base_dir+'_processed_train/*'))
     
@@ -75,7 +75,7 @@ def check():
 
 if __name__ == '__main__':
     start = time.time()
-    #prep_data()
+    prep_data()
     process_test(args.imsize, args.enhanceparam)
     check()
     end = time.time()
