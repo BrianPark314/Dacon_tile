@@ -21,7 +21,7 @@ args.imsize = 256
 args.enhanceparam = 10.0
 args.sharpnessfactor = 1.5
 
-def __main__():
+def prep_data():
     start = time.time()
     print('='*50)
     train_data_custom = ifc(targ_dir=args.train_dir)
@@ -43,4 +43,5 @@ def __check__():
 
     return None
 
-__main__()
+if __name__ == '__main__':
+    prep_data()
