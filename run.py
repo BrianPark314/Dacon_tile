@@ -47,7 +47,7 @@ def process_test(imsize, enhanceparam): #테스트 데이터 준비
     test_path = args.base_dir + 'test/'
     for x in tqdm(Path(test_path).iterdir()):
         im = Image.open(x)
-        im = eda.process_image(im, 256, 10.0)
+        im = eda.process_image(im, imsize, enhanceparam)
         try:
             name = x.split('/')[-1]
         except:
