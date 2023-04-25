@@ -12,10 +12,11 @@ import time
 import easydict
 import gc
 from torchvision import transforms
+from pathlib import Path
 
 
 args = easydict.EasyDict()
-args.base_dir = './data/'
+args.base_dir = Path('./data/')
 args.train_dir = args.base_dir +'train/'
 args.encoder = {}
 args.imsize = 256
