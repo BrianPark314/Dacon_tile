@@ -52,7 +52,10 @@ class ImageFolderCustom(Dataset):
     def load_image(self, index: int) -> Tuple[Image.Image, str]:
         "Opens an image via a path and returns it."
         image_path = self.paths[index]
-        return Image.open(image_path), str(image_path).split('/')[-2]
+        try:
+            return Image.open(image_path), str(image_path).split('/')[-2]
+        except:
+            return Image.open(image_path), str(image_path).split('\\')[-2]
 
     
     def __process__(self, img) -> Image.Image:

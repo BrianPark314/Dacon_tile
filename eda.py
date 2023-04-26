@@ -30,10 +30,6 @@ def get_train(): #train data 불러오기
     number = list(range(len(labels)))
     encoder = dict(zip(labels, number))
     return train_df, encoder #train data의 path와 label이 담긴 dataframe과 인코더 반환
-  
-def augment_data(image):
-    '''label별로 증강 함수 적용'''
-    return None
     
 def process_image(im, imsize, enhanceparam): #image를 인풋으로 받아 각종 필터 적용 후 이미지 리턴
     im = square_pad(im)

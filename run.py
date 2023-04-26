@@ -12,17 +12,17 @@ import time
 import easydict
 import gc
 from torchvision import transforms
-
+from pathlib import Path
 
 args = easydict.EasyDict()
-args.base_dir = './data/'
+args.base_dir = str(Path('data/'))+'/'
 args.train_dir = args.base_dir +'train/'
 args.encoder = {}
 args.imsize = 256
 args.enhanceparam = 10.0
 args.sharpnessfactor = 1.5
 
-def prep_data():
+def prep_data(): #train 데이터 준비
     start = time.time()
     print('='*50 + '\n')
     train_data_custom = ifc(targ_dir=args.train_dir) #train 데이터 custom imagefolder 사용해서 로드
@@ -40,23 +40,26 @@ def prep_data():
     print('='*50)
     return None
 
-def process_test(imsize, enhanceparam): #테스트 데이터 불러오기
+def process_test(imsize, enhanceparam): #테스트 데이터 준비
     start = time.time()
     print('='*50 + '\n')
     print('Now processing test data...' + '\n')
-    test_path = glob(args.base_dir + 'test/*')
-    for x in tqdm(test_path):
+    test_path = args.base_dir + 'test/'
+    for x in tqdm(Path(test_path).iterdir()):
         im = Image.open(x)
-        im = eda.process_image(im, imsize, enhanceparam)
-        name = x.split('/')[-1]
-        print(name)
+        im = eda.process_image(im, 256, 10.0)
+        try:
+            name = x.split('/')[-1]
+        except:
+            x = str(x)
+            name = x.split('\\')[-1]
         im.save(args.base_dir+'_processed_test/'+f'{name}')
     end = time.time()
     print(f'Run complete in {int(end-start)} seconds.' + '\n')
     print('='*50)
     return None
 
-def check():
+def check(): #처리 과정에서 오류가 없었는지 간단하게 확인
     train_df, encoder = eda.get_train()
     processed_train = len(glob(args.base_dir+'_processed_train/*'))
     
@@ -76,7 +79,7 @@ def check():
 
 if __name__ == '__main__':
     start = time.time()
-    #prep_data()
+    prep_data()
     process_test(args.imsize, args.enhanceparam)
     check() 
     end = time.time()
