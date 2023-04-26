@@ -45,10 +45,14 @@ def process_test(imsize, enhanceparam): #테스트 데이터 준비
     print('='*50 + '\n')
     print('Now processing test data...' + '\n')
     test_path = args.base_dir + 'test/'
-    for x in tqdm(Path(test_path).iterdir()):
+    total_length = len(glob(test_path+'*'))
+    for x in tqdm(Path(test_path).iterdir(), total = total_length):
+        if str(x).split('/')[-1][0] == '.': continue
         im = Image.open(x)
         im = eda.process_image(im, imsize, enhanceparam)
+    
         try:
+            x = str(x)
             name = x.split('/')[-1]
         except:
             x = str(x)
