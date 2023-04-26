@@ -50,14 +50,10 @@ def process_test(imsize, enhanceparam): #테스트 데이터 준비
         if str(x).split('/')[-1][0] == '.': continue
         im = Image.open(x)
         im = eda.process_image(im, imsize, enhanceparam)
-    
-        try:
-            x = str(x)
-            name = x.split('/')[-1]
-        except:
-            x = str(x)
-            name = x.split('\\')[-1]
-        im.save(args.base_dir+'_processed_test/'+f'{name}')
+
+        x = str(x)
+        name, ext = x.split('.')[0][-3:], x.split('.')[1]
+        im.save(args.base_dir+'_processed_test/'+f'{name}'+'.'+f'{ext}')
     end = time.time()
     print(f'Run complete in {int(end-start)} seconds.' + '\n')
     print('='*50)
