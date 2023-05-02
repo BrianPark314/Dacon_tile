@@ -103,7 +103,7 @@ def check(): #처리 과정에서 오류가 없었는지 간단하게 확인
     print('No error detected.')
     return None
 
-if __name__ == '__main__':
+if __name__ = '__main__':
     start = time.time()
     aug_data()
     prep_data()
