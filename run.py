@@ -13,6 +13,7 @@ import easydict
 import gc
 from torchvision import transforms
 from pathlib import Path
+import torch
 
 args = easydict.EasyDict()
 args.base_dir = str(Path('data/'))+'/'
@@ -84,3 +85,33 @@ if __name__ == '__main__':
     check()
     end = time.time()
     print(f'Total runtime is {int(end-start)} seconds.')
+
+def processed_tensor(processed_train):
+    """
+    입력받은 processed_train에서 이미지 경로와 레이블을 추출하여 Tensor로 반환하는 함수
+    
+    Args:
+    - processed_train (str): 학습용 이미지 폴더 경로
+    
+    Returns:
+    - labels (torch.Tensor): 레이블을 담은 Tensor
+    """
+    processed_train_list = list(Path(processed_train).glob("*"))
+    processed_train_str = list(map(lambda x: str(x), processed_train_list))
+    
+    golbaeng=[]
+    label_split = []
+
+    for i in range(len(processed_train_str)):
+        a = processed_train_str[i]
+
+        a = a.replace('/', '@')
+        a = a.replace('\\', '@')
+        a = a.replace('.', '@')
+
+        golbaeng.append(a)
+        label_split.append(int(a.split('@')[-2].split('_')[-1]))
+
+    labels = torch.Tensor(label_split)
+    
+    return labels
