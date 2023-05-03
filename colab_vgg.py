@@ -17,7 +17,7 @@ device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cp
 print(f'Current device is: {device}')
 args = easydict.EasyDict()
 args.BATCH_SIZE = 128
-args.NUM_EPOCHS = 10
+args.NUM_EPOCHS = 100
 args.path = Path("/content/gdrive/MyDrive/project/Dacon_tile/data/")
 args.transform = transforms.Compose([ 
         transforms.Resize((64, 64)),
