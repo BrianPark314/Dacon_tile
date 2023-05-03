@@ -36,14 +36,17 @@ class ClassifierModule(nn.Module):
         super(ClassifierModule,self).__init__()
         self.layer1 = nn.Linear(1000,512)
         self.Relu1 = nn.ReLU()
-        self.layer2 = nn.Linear(512, 19)
-        self.Dropout1 = nn.Dropout(p=0.2)
+        self.Dropout1 = nn.Dropout(p=0.4)
+        self.layer2 = nn.Linear(512, 256)
+        self.Relu2 = nn.ReLU()
+        self.Dropout2 = nn.Dropout(p=0.4)
+        self.layer3 = nn.Linear(256, 19)
         self.net = torchvision.models.resnet50(weights = torchvision.models.ResNet50_Weights.DEFAULT)
         for p in self.net.parameters():
             p.requires_grad=False
 
     def forward(self,x):
-        return self.layer2(self.Dropout1(self.Relu1(self.layer1(self.net(x)))))
+        return self.layer3(self.Dropout2(self.Relu2(self.layer2(self.Dropout1(self.Relu1(self.layer1(self.net(x))))))))
 
 def prep():
     print('='*50)
@@ -82,7 +85,7 @@ def inference(model, test_loader, label, device):
     preds = []
     with torch.no_grad():
         for imgs, _ in tqdm(iter(test_loader)):
-            imgs.to(device)
+            imgs.float().to(device)
             pred = model(imgs)
             preds += pred.argmax(1).detach().cpu().numpy().tolist()
     new_preds = preds.copy()
