@@ -30,7 +30,7 @@ class ClassifierModule(nn.Module):
     def __init__(self):
         super(ClassifierModule,self).__init__()
         self.layer1 = nn.Linear(1000,19)
-        self.net = torchvision.models.resnet50(weights = torchvision.models.ResNet50_Weights)
+        self.net = torchvision.models.resnet50(weights = torchvision.models.ResNet50_Weights.DEFAULT)
         for p in self.net.parameters():
             p.requires_grad=False
 
