@@ -105,10 +105,9 @@ def check(): #처리 과정에서 오류가 없었는지 간단하게 확인
 
 if __name__ == '__main__':
     start = time.time()
-    #aug_data()
+    aug_data()
     class_to_idx = prep_data()
-    print(class_to_idx)
-    #process_test(args.imsize, args.enhanceparam)
+    process_test(args.imsize, args.enhanceparam)
     check() 
     end = time.time()
     print(f'Total runtime is {int(end-start)} seconds.')

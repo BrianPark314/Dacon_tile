@@ -10,7 +10,10 @@ from torchvision import datasets, transforms
 from tqdm.auto import tqdm
 from pathlib import Path
 from sklearn import preprocessing
+import pandas as pd
 import customImageFolder as cif
+import glob
+
 torch.manual_seed(42) #파이토치 시드 고정
 #device = torch.device('mps:0' if torch.backends.mps.is_available() else 'cpu')
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
@@ -19,7 +22,9 @@ print(f'Current device is: {device}')
 args = easydict.EasyDict()
 args.BATCH_SIZE = 64
 args.NUM_EPOCHS = 30
-args.path = Path("/content/gdrive/MyDrive/project/Dacon_tile/data/")
+#args.path = Path("/content/gdrive/MyDrive/project/Dacon_tile/data/")
+args.path = Path("/Users/Shark/Projects/Dacon_tile/data")
+
 args.transform = transforms.Compose([ 
         transforms.Resize((224, 224)),
         transforms.RandomHorizontalFlip(p=0.5),
@@ -70,29 +75,37 @@ def go(model, train_data, validation_data):
     print(f"Total training time: {end_time-start_time:.3f} seconds")
     return model_results
 
-def inference(model, test_loader, device):
-    le = preprocessing.LabelEncoder()
+def inference(model, test_loader, label, device):
     model.eval()
     preds = []
     with torch.no_grad():
-        for imgs in tqdm(iter(test_loader)):
-            imgs = imgs.float().to(device)
-            
+        for imgs, _ in tqdm(iter(test_loader)):
+            imgs.to(device)
             pred = model(imgs)
-            
             preds += pred.argmax(1).detach().cpu().numpy().tolist()
-    
-    preds = le.inverse_transform(preds)
-    return preds
+    new_preds = preds.copy()
+    for i, x in enumerate(preds):
+        new_preds[i] = [k for k, v in label.items() if v == x][0]
+    return new_preds
+
+def submission(preds):
+    tests = pd.read_csv(args.path / 'test.csv',index_col='id')
+    list_names = list(tests.index.values)
+    df = pd.DataFrame(list(zip(list_names, preds)), columns=['id','label'])
+    df.to_csv(args.path / 'resnet50.csv', index=False)
+    return None
 
 if __name__ == '__main__':
     model, train_data, validation_data, test_data = prep()
     model, results = go(model, train_data, validation_data)
     print('Saving model...')
-    torch.save(model.state_dict(), args.path + 'models/resnet50.pth')
+    torch.save(model.state_dict(), args.path / 'models/resnet50.pth')
     print('Model saved!')
-    preds = inference(model, test_data, device)
-    label = cif.ImageFolderCustom(args.path+'train/').class_to_idx
-    print(preds)
+    label = cif.ImageFolderCustom(args.path / 'train').class_to_idx
+    print('Generating results...')
+    preds = inference(model, test_data, label, device)
+    submission(preds)
+    print('Run complete.')
+    print('='*50)
 
 
