@@ -15,7 +15,6 @@ import customImageFolder as cif
 import glob
 
 torch.manual_seed(42) #파이토치 시드 고정
-#device = torch.device('mps:0' if torch.backends.mps.is_available() else 'cpu')
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
 print(f'Current device is: {device}')
@@ -35,13 +34,16 @@ args.transform = transforms.Compose([
 class ClassifierModule(nn.Module):
     def __init__(self):
         super(ClassifierModule,self).__init__()
-        self.layer1 = nn.Linear(1000,19)
+        self.layer1 = nn.Linear(1000,512)
+        self.Relu1 = nn.ReLU()
+        self.layer2 = nn.Linear(512, 19)
+        self.Dropout1 = nn.Dropout(p=0.2)
         self.net = torchvision.models.resnet50(weights = torchvision.models.ResNet50_Weights.DEFAULT)
         for p in self.net.parameters():
             p.requires_grad=False
 
     def forward(self,x):
-        return (self.layer1(self.net(x)))
+        return self.layer2(self.Dropout1(self.Relu1(self.layer1(self.net(x)))))
 
 def prep():
     print('='*50)
