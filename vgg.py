@@ -1,3 +1,4 @@
+#%%
 import torch
 import torchvision
 import time
@@ -8,16 +9,18 @@ import torchinfo
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 from tqdm.auto import tqdm
+import plot
+
 torch.manual_seed(42) #파이토치 시드 고정
 #device = torch.device('mps:0' if torch.backends.mps.is_available() else 'cpu')
-device = 'cpu'
+device = device = 'cuda' if torch.cuda.is_available() else 'cpu'
 print (f"PyTorch version:{torch.__version__}") # 1.12.1 이상
 print(f"MPS device built: {torch.backends.mps.is_built()}") # True 여야 합니다.
 print(f"MPS device available: {torch.backends.mps.is_available()}") # True 여야 합니다. 
 
 args = easydict.EasyDict()
-args.BATCH_SIZE = 32
-args.NUM_EPOCHS = 10
+args.BATCH_SIZE = 256
+args.NUM_EPOCHS = 3
 args.transform = transforms.Compose([ 
         transforms.Resize((64, 64)),
         transforms.ToTensor(),
@@ -69,5 +72,8 @@ def go(model, train_data, validation_data):
 if __name__ == '__main__':
     model, train_data, validation_data, test_data = prep()
     results = go(model, train_data, validation_data)
+    plot.plot_loss_curves(results)
+    plot.plot_f1_curves(results)
 
 
+# %%
