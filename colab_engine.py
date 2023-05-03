@@ -24,12 +24,12 @@ class MyDataset(Dataset):
         
     def __getitem__(self, index):
         image_path = self.image_paths[index]
-        x = Image.open(image_path)
+        x = Image.open(image_path).convert('RGB')
         y = self.get_class_label(str(image_path).split('/')[-1])
 
         if self.transform is not None:
             x = self.transform(x)
-        return x[:3,::], y
+        return x, y
     
     def __len__(self):
         return len(self.image_paths)
