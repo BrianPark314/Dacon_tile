@@ -30,7 +30,7 @@ def get_train(): #train data 불러오기
     number = list(range(len(labels)))
     encoder = dict(zip(labels, number))
     return train_df, encoder #train data의 path와 label이 담긴 dataframe과 인코더 반환
-
+    
 def process_image(im, imsize, enhanceparam): #image를 인풋으로 받아 각종 필터 적용 후 이미지 리턴
     im = square_pad(im)
     im = im.resize((imsize, imsize))
@@ -52,3 +52,6 @@ def square_pad(im):
 def save_result(im, n, label): #각각의 파일 읽어오기
     im = im.save(args.base_dir+'_processed_train/'+f'{n}_{label}.png')
     return None
+
+
+
