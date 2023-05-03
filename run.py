@@ -64,7 +64,7 @@ def prep_data(): #train 데이터 준비
     end = time.time()
     print(f'Run complete in {int(end-start)} seconds.' + '\n')
     print('='*50)
-    return None
+    return train_data_custom.class_to_idx
 
 def process_test(imsize, enhanceparam): #테스트 데이터 준비
     start = time.time()
@@ -105,9 +105,10 @@ def check(): #처리 과정에서 오류가 없었는지 간단하게 확인
 
 if __name__ == '__main__':
     start = time.time()
-    aug_data()
-    prep_data()
-    process_test(args.imsize, args.enhanceparam)
+    #aug_data()
+    class_to_idx = prep_data()
+    print(class_to_idx)
+    #process_test(args.imsize, args.enhanceparam)
     check() 
     end = time.time()
     print(f'Total runtime is {int(end-start)} seconds.')

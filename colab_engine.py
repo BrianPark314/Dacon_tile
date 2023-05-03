@@ -106,7 +106,7 @@ def train(model: torch.nn.Module,
         gc.collect()
 
     # 6. Return the filled results at the end of the epochs
-    return results
+    return model, results
 
 def train_step(model: torch.nn.Module, 
                dataloader: torch.utils.data.DataLoader, 
@@ -182,3 +182,9 @@ def test_step(model: torch.nn.Module,
     test_loss = test_loss / len(dataloader)
     test_acc = test_acc / len(dataloader)
     return test_loss, test_acc
+
+def get_result():
+    
+
+
+    return None

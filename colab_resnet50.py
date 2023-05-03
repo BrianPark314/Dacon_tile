@@ -10,6 +10,7 @@ from torchvision import datasets, transforms
 from tqdm.auto import tqdm
 from pathlib import Path
 from sklearn import preprocessing
+import customImageFolder as cif
 torch.manual_seed(42) #파이토치 시드 고정
 #device = torch.device('mps:0' if torch.backends.mps.is_available() else 'cpu')
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
@@ -17,7 +18,7 @@ device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cp
 print(f'Current device is: {device}')
 args = easydict.EasyDict()
 args.BATCH_SIZE = 64
-args.NUM_EPOCHS = 100
+args.NUM_EPOCHS = 30
 args.path = Path("/content/gdrive/MyDrive/project/Dacon_tile/data/")
 args.transform = transforms.Compose([ 
         transforms.Resize((224, 224)),
@@ -40,7 +41,7 @@ class ClassifierModule(nn.Module):
 def prep():
     print('='*50)
     model = ClassifierModule()
-    print('Pytorch vgg16 loaded with pre-trained parameters')
+    print('Pytorch resnet50 loaded with pre-trained parameters')
 
     model.to(device)
     
@@ -86,7 +87,12 @@ def inference(model, test_loader, device):
 
 if __name__ == '__main__':
     model, train_data, validation_data, test_data = prep()
-    results = go(model, train_data, validation_data)
-
+    model, results = go(model, train_data, validation_data)
+    print('Saving model...')
+    torch.save(model.state_dict(), args.path + 'models/resnet50.pth')
+    print('Model saved!')
+    preds = inference(model, test_data, device)
+    label = cif.ImageFolderCustom(args.path+'train/').class_to_idx
+    print(preds)
 
 
