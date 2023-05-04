@@ -21,8 +21,8 @@ print(f'Current device is: {device}')
 args = easydict.EasyDict()
 args.BATCH_SIZE = 64
 args.NUM_EPOCHS = 30
-#args.path = Path("/content/gdrive/MyDrive/project/Dacon_tile/data/")
-args.path = Path("/Users/Shark/Projects/Dacon_tile/data")
+args.path = Path("/content/gdrive/MyDrive/project/Dacon_tile/data/")
+#args.path = Path("/Users/Shark/Projects/Dacon_tile/data")
 
 args.transform = transforms.Compose([ 
         transforms.Resize((224, 224)),
@@ -41,7 +41,7 @@ class ClassifierModule(nn.Module):
         self.Relu2 = nn.ReLU()
         self.Dropout2 = nn.Dropout(p=0.4)
         self.layer3 = nn.Linear(256, 19)
-        self.net = torchvision.models.resnet50(weights = torchvision.models.ResNet50_Weights.DEFAULT)
+        self.net = torchvision.models.googlenet(weights = torchvision.models.GoogLeNet_Weights.DEFAULT)
         for p in self.net.parameters():
             p.requires_grad=False
 
@@ -51,7 +51,7 @@ class ClassifierModule(nn.Module):
 def prep():
     print('='*50)
     model = ClassifierModule()
-    print('Pytorch resnet50 loaded with pre-trained parameters')
+    print('Pytorch googlenet loaded with pre-trained parameters')
 
     model.to(device)
     
