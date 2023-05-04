@@ -88,17 +88,17 @@ def go(model, train_data, validation_data):
 
 if __name__ == '__main__':
     model, train_data, validation_data, test_data = prep()
-    model, results = go(model, train_data, validation_data)
-    print('Saving model...')
-    torch.save(model.state_dict(), args.path / f'models/{args.model_name}.pth')
-    print('Model saved!')
+    #model, results = go(model, train_data, validation_data)
+    #print('Saving model...')
+    #torch.save(model.state_dict(), args.path / f'models/{args.model_name}.pth')
+    #print('Model saved!')
     model = ClassifierModule()
     model.load_state_dict(torch.load(args.path / f'models/{args.model_name}.pth', map_location=torch.device('cpu')))
     model.eval()
     label = cif.ImageFolderCustom(args.path / 'train').class_to_idx
     print('Generating results...')
     preds = eng.inference(model, test_data, label)
-    eng.submission(preds, args.path, model)
+    eng.submission(preds, args.path, args.model_name)
     print('Run complete.')
     print('='*50)
 
