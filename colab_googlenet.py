@@ -70,6 +70,7 @@ def go(model, train_data, validation_data):
     start_time = timer()
 
     # Train model
+    print("Now training model...")
     model_results = eng.train(model=model, 
                         train_dataloader=train_data,
                         test_dataloader=validation_data,
@@ -97,7 +98,7 @@ if __name__ == '__main__':
     label = cif.ImageFolderCustom(args.path / 'train').class_to_idx
     print('Generating results...')
     preds = eng.inference(model, test_data, label)
-    eng.submission(preds)
+    eng.submission(preds, args.path, model)
     print('Run complete.')
     print('='*50)
 

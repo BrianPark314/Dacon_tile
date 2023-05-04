@@ -12,6 +12,7 @@ import zipfile
 from pathlib import Path
 from sklearn.metrics import f1_score
 import pandas as pd
+import torchmetrics
 
 class MyDataset(Dataset):
     def __init__(self, image_paths, transform=None):
@@ -116,8 +117,7 @@ def train(model: torch.nn.Module,
 
         if test_f1 > desired_score:
             print('Desired f1 score reached, early stopping')
-        return model, results
-
+            return model, results
     # 6. Return the filled results at the end of the epochs
     return model, results
 
