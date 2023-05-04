@@ -83,10 +83,11 @@ def go(model, train_data, validation_data):
 
 def inference(model, test_loader, label, device):
     model.eval()
+    model.to('cpu')
     preds = []
     with torch.no_grad():
         for imgs, _ in tqdm(iter(test_loader)):
-            imgs = imgs.to(device)
+            imgs = imgs.to('cpu')
             pred = model(imgs)
             preds += pred.argmax(1).detach().cpu().numpy().tolist()
     new_preds = preds.copy()

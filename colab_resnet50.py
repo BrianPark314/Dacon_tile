@@ -22,8 +22,8 @@ args = easydict.EasyDict()
 args.model_name = 'resnet50'
 args.BATCH_SIZE = 64
 args.NUM_EPOCHS = 30
-args.path = Path("/content/gdrive/MyDrive/project/Dacon_tile/data/")
-#args.path = Path("/Users/Shark/Projects/Dacon_tile/data")
+#args.path = Path("/content/gdrive/MyDrive/project/Dacon_tile/data/")
+args.path = Path("/Users/Shark/Projects/Dacon_tile/data")
 
 args.transform = transforms.Compose([ 
         transforms.Resize((224, 224)),
