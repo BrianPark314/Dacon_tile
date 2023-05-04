@@ -19,6 +19,7 @@ device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cp
 
 print(f'Current device is: {device}')
 args = easydict.EasyDict()
+args.model_name = 'googlenet'
 args.BATCH_SIZE = 64
 args.NUM_EPOCHS = 30
 args.path = Path("/content/gdrive/MyDrive/project/Dacon_tile/data/")
@@ -51,7 +52,7 @@ class ClassifierModule(nn.Module):
 def prep():
     print('='*50)
     model = ClassifierModule()
-    print('Pytorch googlenet loaded with pre-trained parameters')
+    print(f'Pytorch {args.model_name} loaded with pre-trained parameters')
 
     model.to(device)
     
@@ -97,17 +98,17 @@ def submission(preds):
     tests = pd.read_csv(args.path / 'test.csv',index_col='id')
     list_names = list(tests.index.values)
     df = pd.DataFrame(list(zip(list_names, preds)), columns=['id','label'])
-    df.to_csv(args.path / 'resnet50.csv', index=False, encoding='utf-8')
+    df.to_csv(args.path / f'{args.model_name}.csv', index=False, encoding='utf-8')
     return None
 
 if __name__ == '__main__':
     model, train_data, validation_data, test_data = prep()
-    #model, results = go(model, train_data, validation_data)
-    #print('Saving model...')
-    #torch.save(model.state_dict(), args.path / 'models/resnet50.pth')
-    #print('Model saved!')
+    model, results = go(model, train_data, validation_data)
+    print('Saving model...')
+    torch.save(model.state_dict(), args.path / f'models/{args.model_name}.pth')
+    print('Model saved!')
     model = ClassifierModule()
-    model.load_state_dict(torch.load(args.path / 'models/resnet50.pth', map_location=torch.device('cpu')))
+    model.load_state_dict(torch.load(args.path / f'models/{args.model_name}.pth', map_location=torch.device('cpu')))
     model.eval()
     label = cif.ImageFolderCustom(args.path / 'train').class_to_idx
     print('Generating results...')
