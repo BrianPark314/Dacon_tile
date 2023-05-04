@@ -1,7 +1,7 @@
 import torch
 import torchvision
 import time
-import colab_engine
+import colab_engine as eng
 from torch import nn
 import easydict
 import torchinfo
@@ -21,7 +21,8 @@ print(f'Current device is: {device}')
 args = easydict.EasyDict()
 args.model_name = 'googlenet'
 args.BATCH_SIZE = 64
-args.NUM_EPOCHS = 30
+args.NUM_EPOCHS = 100
+args.desired_score = 0.75
 args.path = Path("/content/gdrive/MyDrive/project/Dacon_tile/data/")
 #args.path = Path("/Users/Shark/Projects/Dacon_tile/data")
 
@@ -56,7 +57,7 @@ def prep():
 
     model.to(device)
     
-    train_data, validation_data, test_data = colab_engine.get_data(args.BATCH_SIZE, args.path, args.transform)
+    train_data, validation_data, test_data = eng.get_data(args.BATCH_SIZE, args.path, args.transform)
     print('Data preperation complete.')
 
     print('='*50)
@@ -69,38 +70,20 @@ def go(model, train_data, validation_data):
     start_time = timer()
 
     # Train model
-    model_results = colab_engine.train(model=model, 
+    model_results = eng.train(model=model, 
                         train_dataloader=train_data,
                         test_dataloader=validation_data,
                         optimizer=optimizer,
                         loss_fn=loss_fn, 
-                        epochs=args.NUM_EPOCHS, device=device)
+                        epochs=args.NUM_EPOCHS, 
+                        device=device, 
+                        desired_score=args.desired_score)
 
     # End the timer and print out how long it took
     end_time = timer()
     print(f"Total training time: {end_time-start_time:.3f} seconds")
-    return model_results
+    return model, model_results
 
-def inference(model, test_loader, label, device):
-    model.eval()
-    model.to('cpu')
-    preds = []
-    with torch.no_grad():
-        for imgs, _ in tqdm(iter(test_loader)):
-            imgs = imgs.to('cpu')
-            pred = model(imgs)
-            preds += pred.argmax(1).detach().cpu().numpy().tolist()
-    new_preds = preds.copy()
-    for i, x in enumerate(preds):
-        new_preds[i] = [k for k, v in label.items() if v == x][0]
-    return new_preds
-
-def submission(preds):
-    tests = pd.read_csv(args.path / 'test.csv',index_col='id')
-    list_names = list(tests.index.values)
-    df = pd.DataFrame(list(zip(list_names, preds)), columns=['id','label'])
-    df.to_csv(args.path / f'{args.model_name}.csv', index=False, encoding='utf-8')
-    return None
 
 if __name__ == '__main__':
     model, train_data, validation_data, test_data = prep()
@@ -113,8 +96,8 @@ if __name__ == '__main__':
     model.eval()
     label = cif.ImageFolderCustom(args.path / 'train').class_to_idx
     print('Generating results...')
-    preds = inference(model, test_data, label, device)
-    submission(preds)
+    preds = eng.inference(model, test_data, label, device)
+    eng.submission(preds)
     print('Run complete.')
     print('='*50)
 
