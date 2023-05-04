@@ -12,7 +12,6 @@ import zipfile
 from pathlib import Path
 from sklearn.metrics import f1_score
 import pandas as pd
-import torchmetrics
 
 class MyDataset(Dataset):
     def __init__(self, image_paths, transform=None):
