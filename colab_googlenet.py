@@ -96,7 +96,7 @@ if __name__ == '__main__':
     model.eval()
     label = cif.ImageFolderCustom(args.path / 'train').class_to_idx
     print('Generating results...')
-    preds = eng.inference(model, test_data, label, device)
+    preds = eng.inference(model, test_data, label)
     eng.submission(preds)
     print('Run complete.')
     print('='*50)
