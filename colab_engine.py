@@ -11,6 +11,7 @@ import requests
 import zipfile
 from pathlib import Path
 from sklearn.metrics import f1_score
+import pandas as pd
 
 class MyDataset(Dataset):
     def __init__(self, image_paths, transform=None):
@@ -69,7 +70,8 @@ def train(model: torch.nn.Module,
           test_dataloader: torch.utils.data.DataLoader, 
           optimizer: torch.optim.Optimizer,
           loss_fn: torch.nn.Module,
-          epochs: int, device):
+          epochs: int, device,
+          desired_score):
     
     # 2. Create empty results dictionary
     results = {"train_loss": [],
@@ -82,7 +84,7 @@ def train(model: torch.nn.Module,
     
     # 3. Loop through training and testing steps for a number of epochs
     for epoch in tqdm(range(epochs)):
-        train_loss, train_acc, train_f1 = train_step(model=model,
+        model, train_loss, train_acc, train_f1 = train_step(model=model,
                                            dataloader=train_dataloader,
                                            loss_fn=loss_fn,
                                            optimizer=optimizer,
@@ -112,8 +114,11 @@ def train(model: torch.nn.Module,
         results["test_f1"].append(test_f1)
         gc.collect()
 
+        if test_f1 > desired_score:
+            print('Desired f1 score reached, early stopping')
+            return model, results
     # 6. Return the filled results at the end of the epochs
-    return results
+    return model, results
 
 def train_step(model: torch.nn.Module, 
                dataloader: torch.utils.data.DataLoader, 
@@ -161,9 +166,9 @@ def train_step(model: torch.nn.Module,
     # Adjust metrics to get average loss and accuracy per batch 
     train_loss = train_loss / len(dataloader)
     train_acc = train_acc / len(dataloader)
-    train_f1 = train_acc / len(dataloader)
+    train_f1 = train_f1 / len(dataloader)
 
-    return train_loss, train_acc, train_f1
+    return model, train_loss, train_acc, train_f1
 
 def test_step(model: torch.nn.Module, 
               dataloader: torch.utils.data.DataLoader, 
@@ -206,3 +211,25 @@ def test_step(model: torch.nn.Module,
     test_f1 = test_f1 / len(dataloader)
 
     return test_loss, test_acc, test_f1
+
+def inference(model, test_loader, label):
+    model.eval()
+    model.to('cpu')
+    preds = []
+    with torch.no_grad():
+        for imgs, _ in tqdm(iter(test_loader)):
+            imgs = imgs.to('cpu')
+            pred = model(imgs)
+            preds += pred.argmax(1).detach().cpu().numpy().tolist()
+    new_preds = preds.copy()
+    for i, x in enumerate(preds):
+        new_preds[i] = [k for k, v in label.items() if v == x][0]
+    return new_preds
+
+def submission(preds, path, model_name):
+    tests = pd.read_csv(path / 'test.csv',index_col='id')
+    list_names = list(tests.index.values)
+    df = pd.DataFrame(list(zip(list_names, preds)), columns=['id','label'])
+    df.to_csv(path / f'{model_name}.csv', index=False, encoding='utf-8')
+    return None
+
