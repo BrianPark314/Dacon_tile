@@ -41,7 +41,7 @@ class ClassifierModule(nn.Module):
         self.Relu2 = nn.ReLU()
         self.Dropout2 = nn.Dropout(p=0.4)
         self.layer3 = nn.Linear(256, 19)
-        self.net = torchvision.models.resnet50(weights = torchvision.models.ResNet50_Weights.DEFAULT)
+        self.net = torchvision.models.googlenet(weights = torchvision.models.GoogLeNet_Weights.DEFAULT)
         for p in self.net.parameters():
             p.requires_grad=False
 
