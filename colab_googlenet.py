@@ -22,7 +22,7 @@ args = easydict.EasyDict()
 args.model_name = 'googlenet'
 args.BATCH_SIZE = 64
 args.NUM_EPOCHS = 100
-args.desired_score = 0.75
+args.desired_score = 0.85
 args.path = Path("/content/gdrive/MyDrive/project/Dacon_tile/data/")
 #args.path = Path("/Users/Shark/Projects/Dacon_tile/data")
 
@@ -38,10 +38,10 @@ class ClassifierModule(nn.Module):
         super(ClassifierModule,self).__init__()
         self.layer1 = nn.Linear(1000,512)
         self.Relu1 = nn.ReLU()
-        self.Dropout1 = nn.Dropout(p=0.4)
+        self.Dropout1 = nn.Dropout(p=0.5)
         self.layer2 = nn.Linear(512, 256)
         self.Relu2 = nn.ReLU()
-        self.Dropout2 = nn.Dropout(p=0.4)
+        self.Dropout2 = nn.Dropout(p=0.5)
         self.layer3 = nn.Linear(256, 19)
         self.net = torchvision.models.googlenet(weights = torchvision.models.GoogLeNet_Weights.DEFAULT)
         for p in self.net.parameters():
@@ -88,10 +88,10 @@ def go(model, train_data, validation_data):
 
 if __name__ == '__main__':
     model, train_data, validation_data, test_data = prep()
-    #model, results = go(model, train_data, validation_data)
-    #print('Saving model...')
-    #torch.save(model.state_dict(), args.path / f'models/{args.model_name}.pth')
-    #print('Model saved!')
+    model, results = go(model, train_data, validation_data)
+    print('Saving model...')
+    torch.save(model.state_dict(), args.path / f'models/{args.model_name}.pth')
+    print('Model saved!')
     model = ClassifierModule()
     model.load_state_dict(torch.load(args.path / f'models/{args.model_name}.pth', map_location=torch.device('cpu')))
     model.eval()
