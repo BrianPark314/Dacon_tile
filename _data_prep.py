@@ -1,10 +1,7 @@
 #-*- coding:utf-8 -*-
 
 from glob import glob
-import pandas as pd
-import numpy as np
 from customImageFolder import ImageFolderCustom as ifc
-import matplotlib.pyplot as plt
 from PIL import Image
 from tqdm import tqdm
 import eda
@@ -46,6 +43,7 @@ def process_train(train_path, imsize, enhanceparam): #train 데이터 준비
     
     for i in tqdm(range(len(train_data_custom))): #학습 데이터 처리
         im, label = train_data_custom.load_image(i)
+        label = label.encode('utf-8')
         im = eda.process_image(im, imsize, enhanceparam)
         eda.save_result(im, i, train_data_custom.class_to_idx[label])
         gc.collect()

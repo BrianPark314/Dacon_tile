@@ -4,7 +4,7 @@
 
 1. 실행 파일
 
-- _data_prep.py : 데이터 전처리
+- _data_prep.py : 데이터 전처리 (colab 실행 시 runtime을 cpu로 설정할 것)
 - _train.py : 학습
 - _test.py : 결과 분석
 

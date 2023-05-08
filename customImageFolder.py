@@ -4,10 +4,8 @@ import os
 import pathlib
 import torch
 from torch.utils.data import Dataset
-from torchvision import transforms
 from typing import Tuple, Dict, List
 from PIL import Image
-from pathlib import Path
 
 def find_classes(directory: str) -> Tuple[List[str], Dict[str, int]]:
     """Finds the class folder names in a target directory.
@@ -26,7 +24,7 @@ def find_classes(directory: str) -> Tuple[List[str], Dict[str, int]]:
     """
     # 1. Get the class names by scanning the target directory
     classes = sorted(entry.name for entry in os.scandir(directory) if entry.is_dir())
-    
+    classes = [x.encode('utf-8') for x in classes]
     # 2. Raise an error if class names not found
     if not classes:
         raise FileNotFoundError(f"Couldn't find any classes in {directory}.")

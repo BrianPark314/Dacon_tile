@@ -1,22 +1,10 @@
 #-*- coding:utf-8 -*-
 
 import torch
-import torchvision
-import time
 import engine as eng
 from torch import nn
-import easydict
-import torchinfo
-from torch.utils.data import DataLoader
-from torchvision import datasets, transforms
 from tqdm.auto import tqdm
-from pathlib import Path
-from sklearn import preprocessing
-import pandas as pd
-import customImageFolder as cif
-import glob
 from constants import args
-import models as mds
 
 torch.manual_seed(42) #파이토치 시드 고정
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
