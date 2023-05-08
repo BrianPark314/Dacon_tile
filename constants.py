@@ -26,8 +26,8 @@ args.enhanceparam = 10.0
 args.sharpnessfactor = 1.5
 args.encoder = {}
 
-#args.path = Path("/content/gdrive/MyDrive/project/Dacon_tile/data/")
-args.path = Path("./data")
+args.path = Path("/content/gdrive/MyDrive/project/Dacon_tile/data/")
+#args.path = Path("./data")
 
 args.transform = transforms.Compose([ 
         transforms.Resize((224, 224)),
