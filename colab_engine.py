@@ -1,3 +1,5 @@
+#-*- coding:utf-8 -*-
+
 import torch
 from torch import nn
 from PIL import Image
@@ -95,7 +97,7 @@ def train(model: torch.nn.Module,
             device=device)
         
         # 4. Print out what's happening
-        print(
+        print('\n'+
             f"Epoch: {epoch+1} | "
             f"train_loss: {train_loss:.4f} | "
             f"train_acc: {train_acc:.4f} | "
@@ -150,7 +152,7 @@ def train_step(model: torch.nn.Module,
         train_f1 += f1.item()
 
         # 3. Optimizer zero grad
-        optimizer.zero_grad()
+        optimizer.zero_grad(set_to_none=True)
 
         # 4. Loss backward
         loss.backward()

@@ -1,4 +1,5 @@
-# Write a custom dataset class (inherits from torch.utils.data.Dataset)
+#-*- coding:utf-8 -*-
+
 import os
 import pathlib
 import torch
