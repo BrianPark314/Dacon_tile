@@ -1,7 +1,7 @@
 #-*- coding:utf-8 -*-
 
 import torchvision
-import engine as eng
+import common.engine as eng
 from torch import nn
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
@@ -9,7 +9,6 @@ from tqdm.auto import tqdm
 from pathlib import Path
 from sklearn import preprocessing
 import pandas as pd
-import customImageFolder as cif
 import glob
 
 class GoogleNet(nn.Module):

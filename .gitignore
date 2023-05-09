@@ -2,3 +2,6 @@
 data
 .venv
 __pycache__
+models/trained_models
+models/__pycache__
+common/__pycache__

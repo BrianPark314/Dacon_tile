@@ -11,58 +11,6 @@ import gc
 from sklearn.metrics import f1_score
 import pandas as pd
 
-class MyDataset(Dataset):
-    def __init__(self, image_paths, transform=None):
-        self.image_paths = list(image_paths.glob('*'))
-        self.transform = transform
-        
-    def get_class_label(self, image_name):
-        name = image_name.split('.')[0]
-        label = name.split('_')[-1]
-    
-        return int(label)
-        
-    def __getitem__(self, index):
-        image_path = self.image_paths[index]
-        x = Image.open(image_path).convert('RGB')
-        y = self.get_class_label(str(image_path).split('/')[-1])
-
-        if self.transform is not None:
-            x = self.transform(x)
-        return x, y
-    
-    def __len__(self):
-        return len(self.image_paths)
-
-def get_data(BATCH_SIZE, path, transform: transforms, transform_test: transforms):
-    data_path = path
-    train_dir = data_path / "_processed_train"
-    test_dir = data_path / "_processed_test"
-    
-    train_data = MyDataset(train_dir, transform)
-    test_data = MyDataset(test_dir, transform_test)
-
-    new_train_data , validation_data = torch.utils.data.random_split(train_data, [0.7, 0.3])
-
-    print(f"Creating DataLoaders with batch size {BATCH_SIZE}.")
-
-    # Create DataLoader's
-    train_dataloader = DataLoader(new_train_data, 
-                                        batch_size=BATCH_SIZE, 
-                                        shuffle=True, 
-                                        )
-    valid_dataloader = DataLoader(validation_data, 
-                                        batch_size=BATCH_SIZE, 
-                                        shuffle=True, 
-                                        )
-
-    test_dataloader = DataLoader(test_data, 
-                                        batch_size=BATCH_SIZE, 
-                                        shuffle=False, 
-                                        )
-
-    return train_dataloader, valid_dataloader, test_dataloader
-
 def train(model: torch.nn.Module, 
           train_dataloader: torch.utils.data.DataLoader, 
           test_dataloader: torch.utils.data.DataLoader, 
@@ -215,7 +163,7 @@ def inference(model, test_loader, label):
     model.to('cpu')
     preds = []
     with torch.no_grad():
-        for imgs, _ in tqdm(iter(test_loader)):
+        for imgs in tqdm(iter(test_loader)):
             imgs = imgs.to('cpu')
             pred = model(imgs)
             preds += pred.argmax(1).detach().cpu().numpy().tolist()
@@ -223,11 +171,3 @@ def inference(model, test_loader, label):
     for i, x in enumerate(preds):
         new_preds[i] = [k for k, v in label.items() if v == x][0]
     return new_preds
-
-def submission(preds, path, model_name):
-    tests = pd.read_csv(path / 'test.csv',index_col='id')
-    list_names = list(tests.index.values)
-    df = pd.DataFrame(list(zip(list_names, preds)), columns=['id','label'])
-    df.to_csv(path / f'{model_name}.csv', index=False, encoding='utf-8')
-    return None
-

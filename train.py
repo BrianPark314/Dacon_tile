@@ -1,10 +1,12 @@
 #-*- coding:utf-8 -*-
 
 import torch
-import engine as eng
+import common.engine as eng
+from common import load_data
 from torch import nn
 from tqdm.auto import tqdm
-from constants import args
+from common.params import args
+import os
 
 torch.manual_seed(42) #파이토치 시드 고정
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
@@ -17,14 +19,15 @@ def prep():
 
     model.to(device)
     
-    train_data, validation_data, test_data = eng.get_data(args.BATCH_SIZE, 
+    train_data, validation_data = load_data.get_train_data(args.BATCH_SIZE,
                                                           args.path, 
+                                                          'train',
                                                           args.transform,
-                                                          args.transform_test)
+                                                          )
     print('Data preperation complete.')
 
     print('='*50)
-    return model, train_data, validation_data, test_data
+    return model, train_data, validation_data
 
 def go(model, train_data, validation_data):
     loss_fn = nn.CrossEntropyLoss()
@@ -50,10 +53,13 @@ def go(model, train_data, validation_data):
 
 if __name__ == '__main__':
     print('='*50)
-    model, train_data, validation_data, test_data = prep()
+    model, train_data, validation_data= prep()
     model, results = go(model, train_data, validation_data)
     print('Saving model...')
-    torch.save(model.state_dict(), args.path / f'models/{model.__class__.__name__}.pth')
+    isExist = os.path.exists(args.base_path / f'models/trained_models/{model.__class__.__name__}.pth')
+    if not isExist:
+        os.makedirs(args.base_path / f'models/trained_models/{model.__class__.__name__}.pth')
+    torch.save(model.state_dict(), args.base_path / f'models/trained_models/{model.__class__.__name__}.pth')
     print('Model saved!')
     print('Run complete.')
     print('='*50)

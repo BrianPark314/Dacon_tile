@@ -1,26 +1,26 @@
 #-*- coding:utf-8 -*-
 
-import engine as eng
+import common.engine as eng
 from torch import nn
 import easydict
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 from tqdm.auto import tqdm
 from pathlib import Path
-import models as mds
+import models.model_classes as mds
 
 args = easydict.EasyDict()
 args.BATCH_SIZE = 128
-args.NUM_EPOCHS = 100
+args.NUM_EPOCHS = 1
 args.desired_score = 0.75
 args.imsize = 256
 args.enhanceparam = 10.0
 args.sharpnessfactor = 1.5
 args.encoder = {}
 
-args.path = Path("/content/gdrive/MyDrive/project/Dacon_tile/data/")
-#args.path = Path("./data")
-
+args.colab_path = Path("/content/gdrive/MyDrive/project/Dacon_tile/data/")
+args.path = Path("./data")
+args.base_path = Path(".")
 args.transform = transforms.Compose([ 
         transforms.Resize((224, 224)),
         transforms.RandomHorizontalFlip(p=0.5),
