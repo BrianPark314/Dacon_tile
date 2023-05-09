@@ -4,7 +4,6 @@ import torch
 import common.engine as eng
 import torchinfo
 from common.params import args
-import train
 from common import load_data, utils
 
 if __name__ == '__main__':

@@ -1,15 +1,8 @@
 #-*- coding:utf-8 -*-
 
 import torchvision
-import common.engine as eng
-from torch import nn
-from torch.utils.data import DataLoader
-from torchvision import datasets, transforms
-from tqdm.auto import tqdm
-from pathlib import Path
-from sklearn import preprocessing
-import pandas as pd
-import glob
+from torch import nn, hub
+
 
 class GoogleNet(nn.Module):
     def __init__(self):
@@ -54,4 +47,15 @@ class Vgg16(nn.Module):
             p.requires_grad=False
 
     def forward(self,x):
+        return (self.layer1(self.net(x)))
+    
+class Efficientnet(nn.Module):
+    def __init__(self):
+        super(Efficientnet, self).__init__()
+        self.layer1 = nn.Linear(1000, 19)
+        self.net = hub.load('NVIDIA/DeepLearningExamples:torchhub', 'nvidia_efficientnet_b0', pretrained=True)
+        for p in self.net.parameters():
+            p.requires_grad=False
+        
+    def foward(self,x):
         return (self.layer1(self.net(x)))

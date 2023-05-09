@@ -4,7 +4,6 @@ import torch
 import common.engine as eng
 from common import load_data
 from torch import nn
-from tqdm.auto import tqdm
 from common.params import args
 import os
 

@@ -4,22 +4,21 @@ from glob import glob
 from PIL import Image
 from tqdm import tqdm
 import common.eda as eda
-import os
 import time
 import gc
 from pathlib import Path
 from common.params import args
-from common import utils, load_data
+from common import load_data
 
 def process_train(path, imsize, enhanceparam): #train 데이터 준비
     start = time.time()
     print('='*50 + '\n')
-    train_data_custom = load_data.CustomImageFolder(path / 'train') #train 데이터 custom imagefolder 사용해서 로드
+    train_data_custom = load_data.CustomImageFolder(path / 'train', mode = 'train') #train 데이터 custom imagefolder 사용해서 로드
     print('Train data loaded' + '\n')
     print('Processing Image...' + '\n')
     
     for i in tqdm(range(len(train_data_custom))): #학습 데이터 처리
-        im, label = train_data_custom.load_image(i)
+        im, label = train_data_custom.__getitem__(i)
         im = eda.process_image(im, imsize, enhanceparam)
         eda.save_processed_result(path, im, i, label)
         gc.collect()
