@@ -19,12 +19,9 @@ def find_classes(directory: str) -> Tuple[List[str], Dict[str, int]]:
 
     return classes, class_to_idx
 
-
 class CustomImageFolder(Dataset):
-    
     def __init__(self, targ_dir: str, mode: str, transform=None) -> None:
         self.mode = mode
-
         if self.mode == 'train':
             self.paths = list(pathlib.Path(targ_dir).glob('*/*'))
         else:
@@ -44,17 +41,18 @@ class CustomImageFolder(Dataset):
             if self.transform is not None: return self.transform(img), class_name 
             else: return img, class_name
 
-def get_train_data(BATCH_SIZE, path, mode, transform: transforms, split_size=[0.7, 0.3]):
+def get_train_dataloader(BATCH_SIZE, path, mode, transform: transforms, split_size=[0.7, 0.3]):
     train_dir = path / "_processed_train/"
     train_data = CustomImageFolder(train_dir, mode, transform)
+    label = train_data.class_to_idx
     new_train_data , validation_data = torch.utils.data.random_split(train_data, split_size)
     print(f"Creating DataLoaders with batch size {BATCH_SIZE}.")
     train_dataloader = DataLoader(new_train_data, batch_size=BATCH_SIZE, shuffle=True)
     valid_dataloader = DataLoader(validation_data, batch_size=BATCH_SIZE, shuffle=True)
 
-    return train_dataloader, valid_dataloader
+    return train_dataloader, valid_dataloader, label
 
-def get_test_data(path, mode, transform_test: transforms):
+def get_test_dataloader(path, mode, transform_test: transforms):
     test_dir = path / "_processed_test/"
     print(test_dir)
     test_data = CustomImageFolder(test_dir, mode, transform_test)

@@ -11,7 +11,8 @@ def train(model: torch.nn.Module,
           optimizer: torch.optim.Optimizer,
           loss_fn: torch.nn.Module,
           epochs: int, device,
-          desired_score):
+          desired_score,
+          label):
     
     # 2. Create empty results dictionary
     results = {"train_loss": [],
@@ -28,11 +29,13 @@ def train(model: torch.nn.Module,
                                            dataloader=train_dataloader,
                                            loss_fn=loss_fn,
                                            optimizer=optimizer,
-                                           device=device)
+                                           device=device,
+                                           label=label)
         test_loss, test_acc, test_f1 = test_step(model=model,
             dataloader=test_dataloader,
             loss_fn=loss_fn,
-            device=device)
+            device=device,
+            label=label)
         
         # 4. Print out what's happening
         print('\n'+
@@ -64,7 +67,8 @@ def train_step(model: torch.nn.Module,
                dataloader: torch.utils.data.DataLoader, 
                loss_fn: torch.nn.Module, 
                optimizer: torch.optim.Optimizer,
-               device: torch.device):
+               device: torch.device,
+               label: dict):
     # Put model in train mode
     model.train()
     # Setup train loss and train accuracy values
@@ -72,6 +76,7 @@ def train_step(model: torch.nn.Module,
     
     # Loop through data loader data batches
     for batch, (X, y) in enumerate(dataloader):
+        y = torch.tensor([label[x] for x in y])
         X, y = X.to(device), y.to(device)
         y_pred = model(X)
         y_labels = y.detach().cpu().numpy().tolist()
@@ -96,7 +101,8 @@ def train_step(model: torch.nn.Module,
 def test_step(model: torch.nn.Module, 
               dataloader: torch.utils.data.DataLoader, 
               loss_fn: torch.nn.Module,
-              device: torch.device):
+              device: torch.device,
+              label: dict):
     # Put model in eval mode
     model.eval() 
     
@@ -108,6 +114,7 @@ def test_step(model: torch.nn.Module,
         # Loop through DataLoader batches
         for batch, (X, y) in enumerate(dataloader):
             # Send data to target device
+            y = torch.tensor([label[x] for x in y])
             X, y = X.to(device), y.to(device)
     
             # 1. Forward pass
@@ -115,19 +122,14 @@ def test_step(model: torch.nn.Module,
 
             y_preds = test_pred_logits.argmax(1).detach().cpu().numpy().tolist()
             y_labels = y.detach().cpu().numpy().tolist()
-
-            # 2. Calculate and accumulate loss
             loss = loss_fn(test_pred_logits, y)
             test_loss += loss.item()
+            test_pred_labels = torch.argmax(torch.softmax(test_pred_logits, dim=1), dim=1)
             
-            #f1_score
-            f1 = f1_score(y_labels, y_preds, average='weighted')
+            test_acc += ((test_pred_labels == y).sum().item()/len(test_pred_labels))
+            f1 = f1_score(y_labels, test_pred_labels, average='weighted')
             test_f1 += f1.item()
 
-            # Calculate and accumulate accuracy
-            test_pred_labels = test_pred_logits.argmax(dim=1)
-            test_acc += ((test_pred_labels == y).sum().item()/len(test_pred_labels))
-            
     # Adjust metrics to get average loss and accuracy per batch 
     test_loss = test_loss / len(dataloader)
     test_acc = test_acc / len(dataloader)

@@ -12,23 +12,7 @@ device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cp
 
 print(f'Current device is: {device}')
 
-def prep():
-    model = args.model
-    print(f'Pytorch {model.__class__.__name__} loaded with pre-trained parameters')
-
-    model.to(device)
-    
-    train_data, validation_data = load_data.get_train_data(args.BATCH_SIZE,
-                                                          args.path, 
-                                                          'train',
-                                                          args.transform,
-                                                          )
-    print('Data preperation complete.')
-
-    print('='*50)
-    return model, train_data, validation_data
-
-def go(model, train_data, validation_data):
+def go(model, train_data, validation_data, label):
     loss_fn = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(params=model.parameters(), lr=0.001)
     from timeit import default_timer as timer 
@@ -43,7 +27,8 @@ def go(model, train_data, validation_data):
                         loss_fn=loss_fn, 
                         epochs=args.NUM_EPOCHS, 
                         device=device, 
-                        desired_score=args.desired_score)
+                        desired_score=args.desired_score,
+                        label=label)
 
     # End the timer and print out how long it took
     end_time = timer()
@@ -51,9 +36,19 @@ def go(model, train_data, validation_data):
     return model, model_results
 
 if __name__ == '__main__':
+    model = args.model
+    print(f'Pytorch {model.__class__.__name__} loaded with pre-trained parameters')
+
+    model.to(device)
+    
+    train_data, validation_data, label = load_data.get_train_dataloader(args.BATCH_SIZE,
+                                                          args.path, 
+                                                          'train',
+                                                          args.transform,
+                                                          )
+    print('Data preperation complete.')
     print('='*50)
-    model, train_data, validation_data= prep()
-    model, results = go(model, train_data, validation_data)
+    model, results = go(model, train_data, validation_data, label)
     print('Saving model...')
     isExist = os.path.exists(args.base_path / f'models/trained_models/{model.__class__.__name__}.pth')
     if not isExist:
