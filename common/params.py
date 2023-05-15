@@ -15,6 +15,7 @@ args.imsize = 256
 args.enhanceparam = 10.0
 args.sharpnessfactor = 1.5
 args.encoder = {}
+args.lr = 0.001
 
 if os.path.exists("/content/gdrive/MyDrive/project/Dacon_tile/data/") : args.path = Path("/content/gdrive/MyDrive/project/Dacon_tile/data/")
 else: args.path = Path("./data")

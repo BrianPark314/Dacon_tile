@@ -52,10 +52,10 @@ class ComplexClassifier(nn.Module):
     def __init__(self):
         super(ComplexClassifier, self).__init__()
         self.layer1 = nn.Linear(1000,512)
-        self.Relu1 = nn.LeakyReLU()
+        self.Relu1 = nn.ReLU()
         self.Dropout1 = nn.Dropout(p=0.5)
         self.layer2 = nn.Linear(512, 256)
-        self.Relu2 = nn.LeakyReLU()
+        self.Relu2 = nn.ReLU()
         self.Dropout2 = nn.Dropout(p=0.5)
         self.layer3 = nn.Linear(256, 19)
 
