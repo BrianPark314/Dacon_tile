@@ -40,7 +40,7 @@ class Vgg16(nn.Module):
 class EfficientNet(nn.Module):
     def __init__(self):
         super(EfficientNet, self).__init__()
-        self.classifier = Classifier()
+        self.classifier = ComplexClassifier()
         self.net = models.efficientnet_b7(weights = models.EfficientNet_B7_Weights.DEFAULT)
         for p in self.net.parameters():
             p.requires_grad=False
