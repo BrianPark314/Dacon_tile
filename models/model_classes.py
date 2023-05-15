@@ -52,12 +52,15 @@ class Classifier(nn.Module):
     def __init__(self):
         super(Classifier, self).__init__()
         self.layer1 = nn.Linear(1000,512)
-        self.Relu1 = nn.ReLU()
-        self.Dropout1 = nn.Dropout(p=0.45)
+        self.Relu1 = nn.LeakyReLU()
+        self.Dropout1 = nn.Dropout(p=0.5)
         self.layer2 = nn.Linear(512, 256)
-        self.Relu2 = nn.ReLU()
-        self.Dropout2 = nn.Dropout(p=0.45)
-        self.layer3 = nn.Linear(256, 19)
+        self.Relu2 = nn.LeakyReLU()
+        self.Dropout2 = nn.Dropout(p=0.5)
+        self.layer3 = nn.Linear(256, 128)
+        self.Relu3 = nn.LeakyReLU()
+        self.Dropout3 = nn.Dropout(p=0.5)
+        self.layer4 = nn.Linear(128, 19)
 
     def forward(self, x):
-        return self.layer3(self.Dropout2(self.Relu2(self.layer2(self.Dropout1(self.Relu1(self.layer1(x)))))))
+        return self.layer4(self.Dropout3(self.Relu3(self.layer3(self.Dropout2(self.Relu2(self.layer2(self.Dropout1(self.Relu1(self.layer1(x))))))))))

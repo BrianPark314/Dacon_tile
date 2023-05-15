@@ -5,6 +5,7 @@ from torchvision import transforms
 from pathlib import Path
 import models.model_classes as mds
 import os
+from torchvision.transforms.autoaugment import AutoAugmentPolicy
 
 args = easydict.EasyDict()
 args.BATCH_SIZE = 128
@@ -21,6 +22,7 @@ else: args.path = Path("./data")
 args.base_path = Path(".")
 args.transform = transforms.Compose([ 
         transforms.Resize((224, 224)),
+        transforms.AutoAugment(AutoAugmentPolicy.CIFAR10),
         transforms.RandomPerspective(),
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
