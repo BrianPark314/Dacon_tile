@@ -145,7 +145,7 @@ def inference(model, test_loader, label):
         for imgs in tqdm(iter(test_loader)):
             imgs = imgs.to('cpu')
             pred = model(imgs)
-            preds += pred.softmax().argmax(1).detach().cpu().numpy().tolist()
+            preds += pred.softmax(dim=1).argmax(1).detach().cpu().numpy().tolist()
     new_preds = preds.copy()
     for i, x in enumerate(preds):
         new_preds[i] = [k for k, v in label.items() if v == x][0]

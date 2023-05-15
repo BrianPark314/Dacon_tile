@@ -27,6 +27,6 @@ def submission(preds, path, model_name):
     tests = pd.read_csv(path / 'test.csv',index_col='id')
     list_names = list(tests.index.values)
     df = pd.DataFrame(list(zip(list_names, preds)), columns=['id','label'])
-    df.to_csv(path / f'{model_name}.csv', index=False, encoding='utf-8')
+    df.to_csv(path / f'{model_name}.csv', index=False, encoding='utf-8-sig')
     return None
 
