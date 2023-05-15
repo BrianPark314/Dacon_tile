@@ -53,10 +53,10 @@ class Classifier(nn.Module):
         super(Classifier, self).__init__()
         self.layer1 = nn.Linear(1000,512)
         self.Relu1 = nn.ReLU()
-        self.Dropout1 = nn.Dropout(p=0.5)
+        self.Dropout1 = nn.Dropout(p=0.45)
         self.layer2 = nn.Linear(512, 256)
         self.Relu2 = nn.ReLU()
-        self.Dropout2 = nn.Dropout(p=0.5)
+        self.Dropout2 = nn.Dropout(p=0.45)
         self.layer3 = nn.Linear(256, 19)
 
     def forward(self, x):

@@ -8,8 +8,8 @@ import os
 
 args = easydict.EasyDict()
 args.BATCH_SIZE = 128
-args.NUM_EPOCHS = 100
-args.desired_score = 0.75
+args.NUM_EPOCHS = 200
+args.desired_score = 0.85
 args.imsize = 256
 args.enhanceparam = 10.0
 args.sharpnessfactor = 1.5
