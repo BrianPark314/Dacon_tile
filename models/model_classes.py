@@ -41,7 +41,7 @@ class EfficientNet(nn.Module):
     def __init__(self):
         super(EfficientNet, self).__init__()
         self.classifier = Classifier()
-        self.net = models.efficientnet_b0(pretrained = True)
+        self.net = models.efficientnet_b0(weights = models.EfficientNet_B0_Weights.DEFAULT)
         for p in self.net.parameters():
             p.requires_grad=False
         

@@ -120,11 +120,10 @@ def test_step(model: torch.nn.Module,
             # 1. Forward pass
             test_pred_logits = model(X)
 
-            y_preds = test_pred_logits.argmax(1).detach().cpu().numpy().tolist()
             y_labels = y.detach().cpu().numpy().tolist()
             loss = loss_fn(test_pred_logits, y)
             test_loss += loss.item()
-            test_pred_labels = torch.argmax(torch.softmax(test_pred_logits, dim=1), dim=1)
+            test_pred_labels = torch.argmax(torch.softmax(test_pred_logits, dim=1), dim=1).detach().cpu()
             
             test_acc += ((test_pred_labels == y).sum().item()/len(test_pred_labels))
             f1 = f1_score(y_labels, test_pred_labels, average='weighted')
