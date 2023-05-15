@@ -4,6 +4,7 @@ import easydict
 from torchvision import transforms
 from pathlib import Path
 import models.model_classes as mds
+import enum
 
 args = easydict.EasyDict()
 args.BATCH_SIZE = 128
@@ -28,4 +29,6 @@ args.transform_test = transforms.Compose([
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
 
-args.model = mds.GoogleNet()
+args.model = mds.EfficientNet()
+
+args.seed = 41

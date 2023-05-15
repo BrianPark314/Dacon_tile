@@ -47,8 +47,8 @@ def get_train_dataloader(BATCH_SIZE, path, mode, transform: transforms, split_si
     label = train_data.class_to_idx
     new_train_data , validation_data = torch.utils.data.random_split(train_data, split_size)
     print(f"Creating DataLoaders with batch size {BATCH_SIZE}.")
-    train_dataloader = DataLoader(new_train_data, batch_size=BATCH_SIZE, shuffle=True)
-    valid_dataloader = DataLoader(validation_data, batch_size=BATCH_SIZE, shuffle=True)
+    train_dataloader = DataLoader(new_train_data, batch_size=BATCH_SIZE, shuffle=True, num_workers=0)
+    valid_dataloader = DataLoader(validation_data, batch_size=BATCH_SIZE, shuffle=True, num_workers=0)
 
     return train_dataloader, valid_dataloader, label
 
@@ -56,6 +56,6 @@ def get_test_dataloader(path, mode, transform_test: transforms):
     test_dir = path / "_processed_test/"
     print(test_dir)
     test_data = CustomImageFolder(test_dir, mode, transform_test)
-    test_dataloader = DataLoader(test_data, batch_size = 100, shuffle=False)
+    test_dataloader = DataLoader(test_data, batch_size = 100, shuffle=False, num_workers=0)
     
     return test_dataloader

@@ -1,9 +1,12 @@
 #-*- coding:utf-8 -*-
 
 import pandas as pd
+import numpy as np
 from common import eda
 from glob import glob
 import os
+import random
+import torch
 
 def check(base_dir): #처리 과정에서 오류가 없었는지 간단하게 확인
     train_df, encoder = eda.get_train()
@@ -22,6 +25,15 @@ def check(base_dir): #처리 과정에서 오류가 없었는지 간단하게 �
 
     print('No error detected.')
     return None
+
+def seed_everything(seed):
+    random.seed(seed)
+    os.environ['PYTHONHASHSEED'] = str(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = True
 
 def submission(preds, path, model_name):
     tests = pd.read_csv(path / 'test.csv',index_col='id')

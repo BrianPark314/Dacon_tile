@@ -5,9 +5,9 @@ import common.engine as eng
 from common import load_data
 from torch import nn
 from common.params import args
+from common.utils import seed_everything
 import os
 
-torch.manual_seed(42) #파이토치 시드 고정
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
 print(f'Current device is: {device}')
@@ -36,6 +36,7 @@ def go(model, train_data, validation_data, label):
     return model, model_results
 
 if __name__ == '__main__':
+    seed_everything(args.seed)
     model = args.model
     print(f'Pytorch {model.__class__.__name__} loaded with pre-trained parameters')
 

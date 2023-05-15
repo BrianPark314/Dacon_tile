@@ -5,8 +5,10 @@ import common.engine as eng
 import torchinfo
 from common.params import args
 from common import load_data, utils
+from common.utils import seed_everything
 
 if __name__ == '__main__':
+    seed_everything(args.seed)
     print('='*50)
     test_data = load_data.get_test_dataloader(args.path, 'test', args.transform_test)
     print('Loading model...')
