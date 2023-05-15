@@ -1,4 +1,4 @@
-# 데이콘 팀 
+# 데이콘 팀 고이소박이
 
 ** 주의: 실행 시 constants.py에서 path를 colab인지 local인지에 따라 수정해줘야할 필요가 있음. 추후 일일히 변경할 필요 없게끔 수정 예정
 
@@ -11,10 +11,10 @@
 
 2. 유틸리티 모듈 (common 폴더)
 
-- params.py : 실행에 필요한 모든 파라미터를 담고 있음
-- eda.py : EDA에 필요한 모든 function들을 담고 있음
+- params.py : 실행에 필요한 모든 파라미터
+- eda.py : EDA에 필요한 function
 - engine.py :  모델 학습에 필요한 function
-- load_data.py : 데이터를 불러오기
+- load_data.py : 데이터 불러오기
 - utils.py : 기타등등
 
 3. models
