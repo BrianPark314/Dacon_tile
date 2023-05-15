@@ -41,7 +41,7 @@ class EfficientNet(nn.Module):
     def __init__(self):
         super(EfficientNet, self).__init__()
         self.classifier = Classifier()
-        self.net = models.efficientnet_b0(weights = models.EfficientNet_B0_Weights.DEFAULT)
+        self.net = models.efficientnet_b7(weights = models.EfficientNet_B7_Weights.DEFAULT)
         for p in self.net.parameters():
             p.requires_grad=False
         
@@ -50,20 +50,17 @@ class EfficientNet(nn.Module):
     
 class ComplexClassifier(nn.Module):
     def __init__(self):
-        super(Classifier, self).__init__()
+        super(ComplexClassifier, self).__init__()
         self.layer1 = nn.Linear(1000,512)
         self.Relu1 = nn.LeakyReLU()
         self.Dropout1 = nn.Dropout(p=0.5)
         self.layer2 = nn.Linear(512, 256)
         self.Relu2 = nn.LeakyReLU()
         self.Dropout2 = nn.Dropout(p=0.5)
-        self.layer3 = nn.Linear(256, 128)
-        self.Relu3 = nn.LeakyReLU()
-        self.Dropout3 = nn.Dropout(p=0.5)
-        self.layer4 = nn.Linear(128, 19)
+        self.layer3 = nn.Linear(256, 19)
 
     def forward(self, x):
-        return self.layer4(self.Dropout3(self.Relu3(self.layer3(self.Dropout2(self.Relu2(self.layer2(self.Dropout1(self.Relu1(self.layer1(x))))))))))
+        return self.layer3(self.Dropout2(self.Relu2(self.layer2(self.Dropout1(self.Relu1(self.layer1(x)))))))
 
 class Classifier(nn.Module):
     def __init__(self):
