@@ -14,7 +14,7 @@ print(f'Current device is: {device}')
 
 def go(model, train_data, validation_data, label):
     loss_fn = nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(params=model.parameters(), lr=0.001)
+    optimizer = torch.optim.Adam(params=model.parameters(), lr=0.002)
     from timeit import default_timer as timer 
     start_time = timer()
 
