@@ -48,7 +48,7 @@ class EfficientNet(nn.Module):
     def forward(self,x):
         return (self.classifier(self.net(x)))
     
-class Classifier(nn.Module):
+class ComplexClassifier(nn.Module):
     def __init__(self):
         super(Classifier, self).__init__()
         self.layer1 = nn.Linear(1000,512)
@@ -64,3 +64,11 @@ class Classifier(nn.Module):
 
     def forward(self, x):
         return self.layer4(self.Dropout3(self.Relu3(self.layer3(self.Dropout2(self.Relu2(self.layer2(self.Dropout1(self.Relu1(self.layer1(x))))))))))
+
+class Classifier(nn.Module):
+    def __init__(self):
+        super(Classifier, self).__init__()
+        self.layer1 = nn.Linear(1000,19)
+
+    def forward(self, x):
+        return self.layer1(x)
