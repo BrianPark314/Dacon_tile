@@ -125,7 +125,7 @@ def test_step(model: torch.nn.Module,
             test_loss += loss.item()
             test_pred_labels = torch.argmax(torch.softmax(test_pred_logits, dim=1), dim=1).detach().cpu()
             
-            test_acc += ((test_pred_labels == y).sum().item()/len(test_pred_labels))
+            test_acc += ((test_pred_labels == y.detach().cpu()).sum().item()/len(test_pred_labels))
             f1 = f1_score(y_labels, test_pred_labels, average='weighted')
             test_f1 += f1.item()
 
