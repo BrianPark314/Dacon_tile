@@ -1,63 +1,33 @@
 #-*- coding:utf-8-sig -*-
 
-import torch
-from PIL import Image
+
 from torch.utils.data import DataLoader
-from torch.utils.data import Dataset
-from torchvision import transforms
-import os
-import pathlib
-import torch
-from torch.utils.data import Dataset
-from typing import Tuple, Dict, List
-from PIL import Image
-from skmultilearn.model_selection import iterative_train_test_split
+from torchvision import transforms, datasets
+import numpy as np
+from sklearn.model_selection import train_test_split
 
 
-
-def find_classes(directory: str) -> Tuple[List[str], Dict[str, int]]:
-    classes = sorted(entry.name for entry in os.scandir(directory) if entry.is_dir())
-    class_to_idx = {cls_name: i for i, cls_name in enumerate(classes)}
-
-    return classes, class_to_idx
-
-class CustomImageFolder(Dataset):
-    def __init__(self, targ_dir: str, mode: str, transform=None) -> None:
-        self.mode = mode
-        if self.mode == 'train':
-            self.paths = list(pathlib.Path(targ_dir).glob('*/*'))
-        else:
-            self.paths = list(pathlib.Path(targ_dir).glob('*')) 
-
-        self.transform = transform
-        self.classes, self.class_to_idx = find_classes(targ_dir)
-    
-    def __len__(self) -> int:
-        return len(self.paths)
-    
-    def __getitem__(self, index: int) -> Tuple[torch.Tensor, int]:
-        img = Image.open(self.paths[index]).convert('RGB')
-        if self.mode == 'test': return self.transform(img)
-        else:
-            class_name  = self.paths[index].parent.name 
-            if self.transform is not None: return self.transform(img), class_name 
-            else: return img, class_name
-
-def get_train_dataloader(BATCH_SIZE, path, mode, transform: transforms, split_size=[0.7, 0.3]):
+def get_train_dataloader(BATCH_SIZE, path, transform: transforms):
     train_dir = path / "_processed_train/"
-    train_data = CustomImageFolder(train_dir, mode, transform)
+    train_data = datasets.ImageFolder(train_dir, transform)
+    targets = train_data.targets
     label = train_data.class_to_idx
-    new_train_data , validation_data = torch.utils.data.random_split(train_data, split_size)
+    train_idx, valid_idx= train_test_split(
+        np.arange(len(targets)),
+        test_size=0.3,
+        shuffle=True,
+        stratify=targets)
     print(f"Creating DataLoaders with batch size {BATCH_SIZE}.")
-    train_dataloader = DataLoader(new_train_data, batch_size=BATCH_SIZE, shuffle=True, num_workers=0)
-    valid_dataloader = DataLoader(validation_data, batch_size=BATCH_SIZE, shuffle=True, num_workers=0)
+
+    train_dataloader = DataLoader(train_data, batch_size=BATCH_SIZE, sampler = train_idx, num_workers=0)
+    valid_dataloader = DataLoader(train_data, batch_size=BATCH_SIZE, sampler = valid_idx, num_workers=0)
 
     return train_dataloader, valid_dataloader, label
 
-def get_test_dataloader(path, mode, transform_test: transforms):
+def get_test_dataloader(path, transform_test: transforms):
     test_dir = path / "_processed_test/"
     print(test_dir)
-    test_data = CustomImageFolder(test_dir, mode, transform_test)
-    test_dataloader = DataLoader(test_data, batch_size = 100, shuffle=False, num_workers=0)
+    test_data = datasets.ImageFolder(test_dir, transform_test)
+    test_dataloader = DataLoader(test_data, batch_size = 100, num_workers=0)
     
     return test_dataloader

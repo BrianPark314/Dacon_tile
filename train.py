@@ -47,9 +47,9 @@ if __name__ == '__main__':
     
     train_data, validation_data, label = load_data.get_train_dataloader(args.BATCH_SIZE,
                                                           args.path, 
-                                                          'train',
                                                           args.transform,
                                                           )
+
     print('Data preperation complete.')
     print('='*50)
     model, results = go(model, train_data, validation_data, label)
