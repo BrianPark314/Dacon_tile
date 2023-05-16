@@ -41,7 +41,7 @@ def process_test(base_path, test_path, imsize, enhanceparam): #테스트 데이�
 
         x = str(x)
         name, ext = x.split('.')[0][-3:], x.split('.')[1]
-        im.save(str(base_path) + '/_processed_test/' + f'{name}' + '.' + f'{ext}')
+        im.save(str(base_path) + '/_processed_test/0/' + f'{name}' + '.' + f'{ext}')
     end = time.time()
     print(f'Run complete in {int(end-start)} seconds.' + '\n')
     print('='*50)
