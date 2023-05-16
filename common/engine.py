@@ -138,7 +138,7 @@ def train_step(model: torch.nn.Module,
         loss = loss_fn(y_pred, y)
         train_loss += loss.item() 
         loss.backward()
-        optimizer.step(zero_grad=True)
+        optimizer.zero_grad(set_to_none=True)
 
         y_pred_class = torch.argmax(torch.softmax(y_pred, dim=1), dim=1)
         train_acc += (y_pred_class == y).sum().item()/len(y_pred)
