@@ -1,4 +1,4 @@
-#-*- coding:utf-8 -*-
+#-*- coding:utf-8-sig -*-
 
 from torchvision import models
 from torch import nn, hub
@@ -40,10 +40,8 @@ class Vgg16(nn.Module):
 class EfficientNet(nn.Module):
     def __init__(self):
         super(EfficientNet, self).__init__()
-        self.classifier = ComplexClassifier()
+        self.classifier = Classifier()
         self.net = models.efficientnet_b7(weights = models.EfficientNet_B7_Weights.DEFAULT)
-        for p in self.net.parameters():
-            p.requires_grad=False
         
     def forward(self,x):
         return (self.classifier(self.net(x)))
