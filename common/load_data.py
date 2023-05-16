@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader
 from torchvision import transforms, datasets
 import numpy as np
 from sklearn.model_selection import train_test_split
-
+from common.params import args
 
 def get_train_dataloader(BATCH_SIZE, path, transform: transforms):
     train_dir = path / "_processed_train/"
@@ -16,7 +16,8 @@ def get_train_dataloader(BATCH_SIZE, path, transform: transforms):
         np.arange(len(targets)),
         test_size=0.3,
         shuffle=True,
-        stratify=targets)
+        stratify=targets,
+        random_state=args.seed)
     print(f"Creating DataLoaders with batch size {BATCH_SIZE}.")
 
     train_dataloader = DataLoader(train_data, batch_size=BATCH_SIZE, sampler = train_idx, num_workers=0)

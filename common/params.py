@@ -14,7 +14,8 @@ args.desired_score = 0.85
 args.imsize = 256
 args.enhanceparam = 10.0
 args.sharpnessfactor = 1.5
-args.patience = 20
+args.patience = 10
+args.delta = 0.005
 args.lr = 0.001
 
 if os.path.exists("/content/gdrive/MyDrive/project/Dacon_tile/data/") : args.path = Path("/content/gdrive/MyDrive/project/Dacon_tile/data/")

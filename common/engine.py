@@ -9,7 +9,7 @@ from common.params import args
 
 class EarlyStopping:
     """주어진 patience 이후로 validation loss가 개선되지 않으면 학습을 조기 중지"""
-    def __init__(self, patience=7, verbose=False, delta=0, path= args.base_path / 'models/trained_models/checkpoint.pt'):
+    def __init__(self, patience=7, verbose=False, delta=args.delta, path= args.base_path / 'models/trained_models/checkpoint.pt'):
         """
         Args:
             patience (int): validation loss가 개선된 후 기다리는 기간
@@ -96,6 +96,7 @@ def train(model: torch.nn.Module,
             f"train_loss: {train_loss:.4f} | "
             f"train_acc: {train_acc:.4f} | "
             f"train_f1: {train_f1:.4f} | "
+            + '\n' +
             f"valid_loss: {test_loss:.4f} | "
             f"valid_acc: {test_acc:.4f} | "
             f"valid_f1: {test_f1:.4f} | "
