@@ -138,10 +138,8 @@ def train_step(model: torch.nn.Module,
         loss = loss_fn(y_pred, y)
         train_loss += loss.item() 
 
-        loss.requires_grad_(True)
-        loss.backward()
-
         optimizer.zero_grad(set_to_none=True)
+        loss.backward()
         optimizer.step()
 
         y_pred_class = torch.argmax(torch.softmax(y_pred, dim=1), dim=1)
@@ -186,8 +184,6 @@ def valid_step(model: torch.nn.Module,
             test_acc += ((test_pred_labels == y.detach().cpu()).sum().item()/len(test_pred_labels))
             f1 = f1_score(y_labels, test_pred_labels, average='weighted')
             test_f1 += f1.item()
-
-    lr_scheduler.step()
 
     # Adjust metrics to get average loss and accuracy per batch 
     test_loss = test_loss / len(dataloader)
