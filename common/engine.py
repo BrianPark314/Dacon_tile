@@ -119,7 +119,7 @@ def train(model: torch.nn.Module,
           epochs: int, 
           patience: int,
           device,
-          desired_score,
+          lr_scheduler,
           label
           ):
     
@@ -145,7 +145,7 @@ def train(model: torch.nn.Module,
             dataloader=test_dataloader,
             loss_fn=loss_fn,
             device=device,
-            label=label)
+            lr_scheduler=lr_scheduler)
         
         # 4. Print out what's happening
         print('\n'+
@@ -216,7 +216,7 @@ def valid_step(model: torch.nn.Module,
               dataloader: torch.utils.data.DataLoader, 
               loss_fn: torch.nn.Module,
               device: torch.device,
-              label: dict):
+              lr_scheduler):
     # Put model in eval mode
     model.eval() 
     
@@ -241,6 +241,8 @@ def valid_step(model: torch.nn.Module,
             test_acc += ((test_pred_labels == y.detach().cpu()).sum().item()/len(test_pred_labels))
             f1 = f1_score(y_labels, test_pred_labels, average='weighted')
             test_f1 += f1.item()
+
+    lr_scheduler.step()
 
     # Adjust metrics to get average loss and accuracy per batch 
     test_loss = test_loss / len(dataloader)

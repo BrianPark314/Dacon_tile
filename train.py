@@ -32,7 +32,7 @@ def go(model, train_data, validation_data, label):
                         epochs=args.NUM_EPOCHS, 
                         patience=args.patience,
                         device=device, 
-                        desired_score=args.desired_score,
+                        lr_scheduler=lr_scheduler,
                         label=label)
 
     # End the timer and print out how long it took
