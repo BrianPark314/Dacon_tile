@@ -115,7 +115,7 @@ def train(model: torch.nn.Module,
         if early_stopping.early_stop:
             print("Early stopping")
             break
-        model.load_state_dict(torch.load('checkpoint.pt'))
+        model.load_state_dict(torch.load(args.base_path / 'models/trained_models/checkpoint.pt'))
     return model, results
 
 def train_step(model: torch.nn.Module, 
