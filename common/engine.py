@@ -137,8 +137,12 @@ def train_step(model: torch.nn.Module,
         y_labels = y.detach().cpu().numpy().tolist()
         loss = loss_fn(y_pred, y)
         train_loss += loss.item() 
+
+        loss.requires_grad_(True)
         loss.backward()
+
         optimizer.zero_grad(set_to_none=True)
+        optimizer.step()
 
         y_pred_class = torch.argmax(torch.softmax(y_pred, dim=1), dim=1)
         train_acc += (y_pred_class == y).sum().item()/len(y_pred)
