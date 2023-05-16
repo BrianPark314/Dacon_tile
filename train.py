@@ -38,6 +38,8 @@ def go(model, train_data, validation_data, label):
 
 if __name__ == '__main__':
     seed_everything(args.seed)
+    torch.cuda.empty_cache()
+
     model = args.model
     print(f'Pytorch {model.__class__.__name__} loaded with pre-trained parameters')
 
