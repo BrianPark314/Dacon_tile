@@ -1,4 +1,4 @@
-#-*- coding:utf-8 -*-
+#-*- coding:utf-8-sig -*-
 
 import torch
 import common.engine as eng

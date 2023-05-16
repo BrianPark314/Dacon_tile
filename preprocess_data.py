@@ -1,4 +1,4 @@
-#-*- coding:utf-8 -*-
+#-*- coding:utf-8-sig -*-
 
 from glob import glob
 from PIL import Image

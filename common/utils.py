@@ -1,4 +1,4 @@
-#-*- coding:utf-8 -*-
+#-*- coding:utf-8-sig -*-
 
 import pandas as pd
 import numpy as np

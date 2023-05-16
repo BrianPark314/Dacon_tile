@@ -1,4 +1,4 @@
-#-*- coding:utf-8 -*-
+#-*- coding:utf-8-sig -*-
 
 from common.params import args
 from common import eda

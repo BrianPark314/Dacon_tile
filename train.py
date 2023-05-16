@@ -1,4 +1,4 @@
-#-*- coding:utf-8 -*-
+#-*- coding:utf-8-sig -*-
 
 import torch
 import common.engine as eng
@@ -26,6 +26,7 @@ def go(model, train_data, validation_data, label):
                         optimizer=optimizer,
                         loss_fn=loss_fn, 
                         epochs=args.NUM_EPOCHS, 
+                        patience=args.patience,
                         device=device, 
                         desired_score=args.desired_score,
                         label=label)
@@ -51,7 +52,7 @@ if __name__ == '__main__':
     print('='*50)
     model, results = go(model, train_data, validation_data, label)
     print('Saving model...')
-    
+
     isExist = os.path.exists(args.base_path / 'models/trained_models')
     if not isExist:
         os.makedirs(args.base_path / f'models/trained_models/{model.__class__.__name__}.pth')

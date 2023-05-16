@@ -1,4 +1,4 @@
-#-*- coding:utf-8 -*-
+#-*- coding:utf-8-sig -*-
 
 import easydict
 from torchvision import transforms
@@ -14,7 +14,7 @@ args.desired_score = 0.85
 args.imsize = 256
 args.enhanceparam = 10.0
 args.sharpnessfactor = 1.5
-args.encoder = {}
+args.patience = 20
 args.lr = 0.001
 
 if os.path.exists("/content/gdrive/MyDrive/project/Dacon_tile/data/") : args.path = Path("/content/gdrive/MyDrive/project/Dacon_tile/data/")
