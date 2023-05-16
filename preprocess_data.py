@@ -1,4 +1,4 @@
-#-*- coding:utf-8 -*-
+#-*- coding:utf-8-sig -*-
 
 from glob import glob
 from PIL import Image
@@ -9,6 +9,7 @@ import gc
 from pathlib import Path
 from common.params import args
 from common import load_data
+from common.utils import seed_everything
 
 def process_train(path, imsize, enhanceparam): #train 데이터 준비
     start = time.time()
@@ -47,6 +48,7 @@ def process_test(base_path, test_path, imsize, enhanceparam): #테스트 데이�
     return None
 
 if __name__ == '__main__':
+    seed_everything(args.seed)
     start = time.time()
     process_train(args.path, args.imsize, args.enhanceparam)
     process_test(args.path, args.path / 'test/', args.imsize, args.enhanceparam)

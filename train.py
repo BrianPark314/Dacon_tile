@@ -1,20 +1,24 @@
-#-*- coding:utf-8 -*-
+#-*- coding:utf-8-sig -*-
 
 import torch
 import common.engine as eng
 from common import load_data
 from torch import nn
+<<<<<<< HEAD
 from common.params_effNet import args
+=======
+from common.params import args
+from common.utils import seed_everything
+>>>>>>> 4b877ba582d0655f7d6cb6cca33b8e9d522987cd
 import os
 
-torch.manual_seed(42) #파이토치 시드 고정
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
 print(f'Current device is: {device}')
 
 def go(model, train_data, validation_data, label):
     loss_fn = nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(params=model.parameters(), lr=0.001)
+    optimizer = torch.optim.Adam(params=model.parameters(), lr=args.lr)
     from timeit import default_timer as timer 
     start_time = timer()
 
@@ -26,6 +30,7 @@ def go(model, train_data, validation_data, label):
                         optimizer=optimizer,
                         loss_fn=loss_fn, 
                         epochs=args.NUM_EPOCHS, 
+                        patience=args.patience,
                         device=device, 
                         desired_score=args.desired_score,
                         label=label)
@@ -36,6 +41,9 @@ def go(model, train_data, validation_data, label):
     return model, model_results
 
 if __name__ == '__main__':
+    seed_everything(args.seed)
+    torch.cuda.empty_cache()
+
     model = args.model
     print(f'Pytorch {model.__class__.__name__} loaded with pre-trained parameters')
 
@@ -43,14 +51,15 @@ if __name__ == '__main__':
     
     train_data, validation_data, label = load_data.get_train_dataloader(args.BATCH_SIZE,
                                                           args.path, 
-                                                          'train',
                                                           args.transform,
                                                           )
+
     print('Data preperation complete.')
     print('='*50)
     model, results = go(model, train_data, validation_data, label)
     print('Saving model...')
 
+<<<<<<< HEAD
     # isExist = os.path.exists(args.base_path / f'models/trained_models/{model.__class__.__name__}.pth')
     # if not isExist:
     #     os.makedirs(args.base_path / f'models/trained_models/{model.__class__.__name__}.pth')
@@ -63,6 +72,12 @@ if __name__ == '__main__':
     if not os.path.exists(dir):
         os.makedirs(name = dir)
     torch.save(model.state_dict(), dir)
+=======
+    isExist = os.path.exists(args.base_path / 'models/trained_models')
+    if not isExist:
+        os.makedirs(args.base_path / f'models/trained_models/{model.__class__.__name__}.pth')
+    torch.save(model.state_dict(), args.base_path / f'models/trained_models/{model.__class__.__name__}.pth')
+>>>>>>> 4b877ba582d0655f7d6cb6cca33b8e9d522987cd
     print('Model saved!')
     print('Run complete.')
     print('='*50)
