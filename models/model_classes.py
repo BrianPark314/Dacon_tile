@@ -54,10 +54,10 @@ class ComplexClassifier(nn.Module):
         self.layer1 = nn.Linear(1000,512)
         self.Relu1 = nn.ReLU()
         self.Dropout1 = nn.Dropout(p=0.5)
-        self.layer2 = nn.Linear(512, 256)
+        self.layer2 = nn.Linear(512, 512)
         self.Relu2 = nn.ReLU()
         self.Dropout2 = nn.Dropout(p=0.5)
-        self.layer3 = nn.Linear(256, 19)
+        self.layer3 = nn.Linear(512, 19)
 
     def forward(self, x):
         return self.layer3(self.Dropout2(self.Relu2(self.layer2(self.Dropout1(self.Relu1(self.layer1(x)))))))

@@ -51,7 +51,8 @@ if __name__ == '__main__':
     print('='*50)
     model, results = go(model, train_data, validation_data, label)
     print('Saving model...')
-    isExist = os.path.exists(args.base_path / f'models/trained_models/{model.__class__.__name__}.pth')
+    
+    isExist = os.path.exists(args.base_path / 'models/trained_models')
     if not isExist:
         os.makedirs(args.base_path / f'models/trained_models/{model.__class__.__name__}.pth')
     torch.save(model.state_dict(), args.base_path / f'models/trained_models/{model.__class__.__name__}.pth')
