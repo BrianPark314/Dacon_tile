@@ -1,7 +1,5 @@
 # 데이콘 팀 고이소박이
 
-** 주의: 실행 시 constants.py에서 path를 colab인지 local인지에 따라 수정해줘야할 필요가 있음. 추후 일일히 변경할 필요 없게끔 수정 예정
-
 1. 실행 파일
 
 - augment_data.py : 데이터 증강

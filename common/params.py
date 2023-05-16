@@ -9,7 +9,7 @@ from torchvision.transforms.autoaugment import AutoAugmentPolicy
 
 args = easydict.EasyDict()
 args.BATCH_SIZE = 128
-args.NUM_EPOCHS = 1
+args.NUM_EPOCHS = 100
 args.desired_score = 0.85
 args.imsize = 256
 args.enhanceparam = 10.0
@@ -28,6 +28,7 @@ args.transform = transforms.Compose([
     ])
 
 args.transform_test = transforms.Compose([ 
+        transforms.Resize((224, 224)),
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
