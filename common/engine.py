@@ -7,6 +7,63 @@ from sklearn.metrics import f1_score
 import numpy as np
 from common.params import args
 
+
+class SAM(torch.optim.Optimizer):
+    def __init__(self, params, base_optimizer, rho=0.05, **kwargs):
+        assert rho >= 0.0, f"Invalid rho, should be non-negative: {rho}"
+
+        defaults = dict(rho=rho, **kwargs)
+        super(SAM, self).__init__(params, defaults)
+
+        self.base_optimizer = base_optimizer(self.param_groups, **kwargs)
+        self.param_groups = self.base_optimizer.param_groups
+
+    @torch.no_grad()
+    def first_step(self, zero_grad=False):
+        grad_norm = self._grad_norm()
+        for group in self.param_groups:
+            scale = group["rho"] / (grad_norm + 1e-12)
+
+            for p in group["params"]:
+                if p.grad is None: continue
+                e_w = p.grad * scale.to(p)
+                p.add_(e_w)  # climb to the local maximum "w + e(w)"
+                self.state[p]["e_w"] = e_w
+
+        if zero_grad: self.zero_grad()
+
+    @torch.no_grad()
+    def second_step(self, zero_grad=False):
+        for group in self.param_groups:
+            for p in group["params"]:
+                if p.grad is None: continue
+                p.sub_(self.state[p]["e_w"])  # get back to "w" from "w + e(w)"
+
+        self.base_optimizer.step()  # do the actual "sharpness-aware" update
+
+        if zero_grad: self.zero_grad()
+
+    @torch.no_grad()
+    def step(self, closure=None):
+        assert closure is not None, "Sharpness Aware Minimization requires closure, but it was not provided"
+        closure = torch.enable_grad()(closure)  # the closure should do a full forward-backward pass
+
+        self.first_step(zero_grad=True)
+        closure()
+        self.second_step()
+
+    def _grad_norm(self):
+        shared_device = self.param_groups[0]["params"][0].device  # put everything on the same device, in case of model parallelism
+        norm = torch.norm(
+                    torch.stack([
+                        p.grad.norm(p=2).to(shared_device)
+                        for group in self.param_groups for p in group["params"]
+                        if p.grad is not None
+                    ]),
+                    p=2
+               )
+        return norm
+
 class EarlyStopping:
     """주어진 patience 이후로 validation loss가 개선되지 않으면 학습을 조기 중지"""
     def __init__(self, patience=7, verbose=False, delta=args.delta, path= args.base_path / 'models/trained_models/checkpoint.pt'):
@@ -62,7 +119,7 @@ def train(model: torch.nn.Module,
           epochs: int, 
           patience: int,
           device,
-          desired_score,
+          lr_scheduler,
           label
           ):
     
@@ -88,7 +145,7 @@ def train(model: torch.nn.Module,
             dataloader=test_dataloader,
             loss_fn=loss_fn,
             device=device,
-            label=label)
+            lr_scheduler=lr_scheduler)
         
         # 4. Print out what's happening
         print('\n'+
@@ -137,9 +194,11 @@ def train_step(model: torch.nn.Module,
         y_labels = y.detach().cpu().numpy().tolist()
         loss = loss_fn(y_pred, y)
         train_loss += loss.item() 
-        optimizer.zero_grad(set_to_none=True)
         loss.backward()
-        optimizer.step()
+        optimizer.first_step(zero_grad=True)
+        loss_fn(model(X), y).backward()
+        optimizer.second_step(zero_grad=True)
+
         y_pred_class = torch.argmax(torch.softmax(y_pred, dim=1), dim=1)
         train_acc += (y_pred_class == y).sum().item()/len(y_pred)
         f1 = f1_score(y_labels, y_pred_class.detach().cpu().numpy().tolist(), average='weighted')
@@ -157,7 +216,7 @@ def valid_step(model: torch.nn.Module,
               dataloader: torch.utils.data.DataLoader, 
               loss_fn: torch.nn.Module,
               device: torch.device,
-              label: dict):
+              lr_scheduler):
     # Put model in eval mode
     model.eval() 
     
@@ -183,6 +242,8 @@ def valid_step(model: torch.nn.Module,
             f1 = f1_score(y_labels, test_pred_labels, average='weighted')
             test_f1 += f1.item()
 
+    lr_scheduler.step()
+
     # Adjust metrics to get average loss and accuracy per batch 
     test_loss = test_loss / len(dataloader)
     test_acc = test_acc / len(dataloader)
@@ -195,7 +256,7 @@ def inference(model, test_loader, label):
     model.to('cpu')
     preds = []
     with torch.no_grad():
-        for imgs in tqdm(iter(test_loader)):
+        for imgs, _ in tqdm(iter(test_loader)):
             imgs = imgs.to('cpu')
             pred = model(imgs)
             preds += pred.softmax(dim=1).argmax(1).detach().cpu().numpy().tolist()

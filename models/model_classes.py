@@ -1,7 +1,7 @@
 #-*- coding:utf-8-sig -*-
 
 from torchvision import models
-from torch import nn, hub
+from torch import nn
 
 
 class GoogleNet(nn.Module):
