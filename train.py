@@ -14,8 +14,7 @@ print(f'Current device is: {device}')
 
 def go(model, train_data, validation_data, label):
     loss_fn = nn.CrossEntropyLoss()
-    base_optimizer = torch.optim.SGD
-    optimizer = eng.SAM(model.parameters(), base_optimizer, lr=args.lr, momentum=0.9)
+    optimizer = torch.optim.Adam(params=model.parameters(), lr=args.lr)
     lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer,
                                                 step_size = 5,
                                                 gamma = 0.75)
