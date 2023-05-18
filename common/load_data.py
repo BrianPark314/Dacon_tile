@@ -6,11 +6,20 @@ from torchvision import transforms, datasets
 import numpy as np
 from sklearn.model_selection import train_test_split
 from common.params import args
+import torch
+
+def get_kfold_dataloader(BATCH_SIZE, path, transform: transforms):
+
+    kfold_dataloader = 0
+
+    return kfold_dataloader
 
 def get_train_dataloader(BATCH_SIZE, path, transform: transforms):
     train_dir = path / "_processed_train/"
     train_data = datasets.ImageFolder(train_dir, transform)
     targets = train_data.targets
+    class_counts = torch.unique(torch.tensor(targets), return_counts=True)
+    print(class_counts)
     label = train_data.class_to_idx
     train_idx, valid_idx= train_test_split(
         np.arange(len(targets)),

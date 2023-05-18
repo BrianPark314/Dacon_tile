@@ -8,7 +8,8 @@ from pathlib import Path
 from PIL import Image
 from PIL import ImageOps
 from tqdm import tqdm
-
+from torchvision import datasets
+import torch
 from common import load_data
     
 def square_pad(im):
@@ -76,18 +77,21 @@ def data_rotate(save_path, im, n):
     
 def aug_data(train_path):
     try:
-        df,_ = load_train(train_path)
-        idx = df['label'].value_counts().index
-        lb = df['label'].value_counts().values < 60
-        lb = idx[lb].tolist()
-        aug_data_custom = load_data.CustomImageFolder(train_path, 'train')
+        aug_data_custom = datasets.ImageFolder(train_path)
+        class_counts = (torch.unique(torch.tensor(aug_data_custom.targets), return_counts=True))
+        print(class_counts)
+        lb = [int(class_counts[0][i]) for i in range(len(class_counts[0])) if class_counts[1][i] < 400]
+        
+        label_dict = aug_data_custom.class_to_idx
 
         for i in tqdm(range(len(aug_data_custom))): #학습 데이터 처리
             im, label = aug_data_custom.__getitem__(i)
             if label in lb:
-                path = Path(os.path.join(train_path, label)) 
+                path = Path(os.path.join(train_path, [k for k, v in label_dict.items() if v == label][0])) 
                 data_flip(path,im,i)
                 data_rotate(path,im,i)
+
+        print(torch.unique(torch.tensor(datasets.ImageFolder(train_path).targets), return_counts=True))
         return "Success"
     
     except Exception as e:

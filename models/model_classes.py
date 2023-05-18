@@ -2,7 +2,7 @@
 
 from torchvision import models
 from torch import nn
-
+from sklearn.ensemble import GradientBoostingClassifier
 
 class GoogleNet(nn.Module):
     def __init__(self):
