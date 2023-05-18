@@ -20,7 +20,7 @@ def go(model, train_data, validation_data, label):
     loss_fn = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(params=model.parameters(), lr=args.lr)
     from timeit import default_timer as timer 
-    start_time = timer()
+    start_time = timer() 
 
     # Train model
     print("Now training model...")
@@ -45,6 +45,11 @@ if __name__ == '__main__':
     torch.cuda.empty_cache()
 
     model = args.model
+
+    isExist = os.path.exists(args.base_path / 'models/trained_models')
+    if not isExist:
+        os.makedirs(args.base_path / f'models/trained_models')
+
     print(f'Pytorch {model.__class__.__name__} loaded with pre-trained parameters')
 
     model.to(device)
@@ -59,25 +64,10 @@ if __name__ == '__main__':
     model, results = go(model, train_data, validation_data, label)
     print('Saving model...')
 
-<<<<<<< HEAD
-    # isExist = os.path.exists(args.base_path / f'models/trained_models/{model.__class__.__name__}.pth')
-    # if not isExist:
-    #     os.makedirs(args.base_path / f'models/trained_models/{model.__class__.__name__}.pth')
-    # torch.save(model.state_dict(), args.base_path / f'models/trained_models/{model.__class__.__name__}.pth')
-    # print('Model saved!')
-    # print('Run complete.')
-    # print('='*50)
-
-    dir = os.path.join(os.getcwd(),'models','trained_models',f'{model.__class__.__name__}.pth')
-    if not os.path.exists(dir):
-        os.makedirs(name = dir)
-    torch.save(model.state_dict(), dir)
-=======
     isExist = os.path.exists(args.base_path / 'models/trained_models')
     if not isExist:
         os.makedirs(args.base_path / f'models/trained_models/{model.__class__.__name__}.pth')
     torch.save(model.state_dict(), args.base_path / f'models/trained_models/{model.__class__.__name__}.pth')
->>>>>>> 4b877ba582d0655f7d6cb6cca33b8e9d522987cd
     print('Model saved!')
     print('Run complete.')
     print('='*50)
