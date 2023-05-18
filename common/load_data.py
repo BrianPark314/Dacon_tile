@@ -41,7 +41,7 @@ def get_train_dataloader(BATCH_SIZE, path, transform: transforms):
     tr_label = [train_data.targets[i] for i in train_idx]
     val_label = [train_data.targets[i] for i in valid_idx]
 
-    tr_weights= tr_weights= torch.DoubleTensor(make_weights(tr_label,len(train_data.classes)))
+    tr_weights = torch.DoubleTensor(make_weights(tr_label,len(train_data.classes)))
     val_weights = torch.DoubleTensor(make_weights(val_label,len(train_data.classes)))
 
     tr_sampler = torch.utils.data.sampler.WeightedRandomSampler(tr_weights, len(tr_weights))
