@@ -3,13 +3,16 @@
 import easydict
 from torchvision import transforms
 from pathlib import Path
+import os
+import sys
+sys.path.append(os.getcwd()) #models 절대경로 지정
 import models.model_classes as mds
 import os
 from torchvision.transforms.autoaugment import AutoAugmentPolicy
 
 args = easydict.EasyDict()
 args.BATCH_SIZE = 128
-args.NUM_EPOCHS = 100
+args.NUM_EPOCHS = 1
 args.desired_score = 0.85
 args.imsize = 256
 args.enhanceparam = 10.0

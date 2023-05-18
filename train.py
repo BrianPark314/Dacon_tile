@@ -19,7 +19,7 @@ def go(model, train_data, validation_data, label):
                                                 step_size = 5,
                                                 gamma = 0.75)
     from timeit import default_timer as timer 
-    start_time = timer()
+    start_time = timer() 
 
     # Train model
     print("Now training model...")
@@ -44,6 +44,11 @@ if __name__ == '__main__':
     torch.cuda.empty_cache()
 
     model = args.model
+
+    isExist = os.path.exists(args.base_path / 'models/trained_models')
+    if not isExist:
+        os.makedirs(args.base_path / f'models/trained_models')
+
     print(f'Pytorch {model.__class__.__name__} loaded with pre-trained parameters')
 
     model.to(device)
@@ -58,9 +63,6 @@ if __name__ == '__main__':
     model, results = go(model, train_data, validation_data, label)
     print('Saving model...')
 
-    isExist = os.path.exists(args.base_path / 'models/trained_models')
-    if not isExist:
-        os.makedirs(args.base_path / f'models/trained_models/{model.__class__.__name__}.pth')
     torch.save(model.state_dict(), args.base_path / f'models/trained_models/{model.__class__.__name__}.pth')
     print('Model saved!')
     print('Run complete.')
