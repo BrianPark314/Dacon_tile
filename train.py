@@ -4,12 +4,8 @@ import torch
 import common.engine as eng
 from common import load_data
 from torch import nn
-<<<<<<< HEAD
-from common.params_effNet import args
-=======
 from common.params import args
 from common.utils import seed_everything
->>>>>>> 4b877ba582d0655f7d6cb6cca33b8e9d522987cd
 import os
 
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
@@ -64,9 +60,6 @@ if __name__ == '__main__':
     model, results = go(model, train_data, validation_data, label)
     print('Saving model...')
 
-    isExist = os.path.exists(args.base_path / 'models/trained_models')
-    if not isExist:
-        os.makedirs(args.base_path / f'models/trained_models/{model.__class__.__name__}.pth')
     torch.save(model.state_dict(), args.base_path / f'models/trained_models/{model.__class__.__name__}.pth')
     print('Model saved!')
     print('Run complete.')

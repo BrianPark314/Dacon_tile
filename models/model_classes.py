@@ -47,9 +47,6 @@ class EfficientNet(nn.Module):
 
         
     def forward(self,x):
-<<<<<<< HEAD
-        return (self.layer1(self.net(x)))
-=======
         return (self.classifier(self.net(x)))
     
 class ComplexClassifier(nn.Module):
@@ -73,4 +70,3 @@ class Classifier(nn.Module):
 
     def forward(self, x):
         return self.layer1(x)
->>>>>>> 4b877ba582d0655f7d6cb6cca33b8e9d522987cd
