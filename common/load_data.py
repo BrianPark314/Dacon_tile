@@ -28,6 +28,8 @@ def get_train_dataloader(BATCH_SIZE, path, transform: transforms):
     train_dir = path / "_processed_train/"
     train_data = datasets.ImageFolder(train_dir, transform)
     targets = train_data.targets
+    class_counts = torch.unique(torch.tensor(targets), return_counts=True)
+    print(class_counts)
     label = train_data.class_to_idx
     train_idx, valid_idx= train_test_split(
         np.arange(len(targets)),
@@ -52,10 +54,11 @@ def get_train_dataloader(BATCH_SIZE, path, transform: transforms):
 
     return train_dataloader, valid_dataloader, label
 
-def get_test_dataloader(path, transform_test: transforms):
+def get_test_dataloader(BATCH_SIZE, path, transform_test: transforms):
+    train_dir = path / "_processed_train/"
+    label = datasets.ImageFolder(train_dir).class_to_idx
     test_dir = path / "_processed_test/"
-    print(test_dir)
     test_data = datasets.ImageFolder(test_dir, transform_test)
-    test_dataloader = DataLoader(test_data, batch_size = 100, num_workers=0)
+    test_dataloader = DataLoader(test_data, batch_size = BATCH_SIZE, num_workers=0)
     
-    return test_dataloader
+    return test_dataloader, label

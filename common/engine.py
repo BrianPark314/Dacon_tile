@@ -4,6 +4,7 @@ import torch
 from tqdm.auto import tqdm
 import gc
 from sklearn.metrics import f1_score
+from sklearn.model_selection import StratifiedKFold
 import numpy as np
 from common.params import args
 
@@ -62,7 +63,7 @@ def train(model: torch.nn.Module,
           epochs: int, 
           patience: int,
           device,
-          desired_score,
+          lr_scheduler,
           label
           ):
     
@@ -88,7 +89,7 @@ def train(model: torch.nn.Module,
             dataloader=test_dataloader,
             loss_fn=loss_fn,
             device=device,
-            label=label)
+            lr_scheduler=lr_scheduler)
         
         # 4. Print out what's happening
         print('\n'+
@@ -137,9 +138,11 @@ def train_step(model: torch.nn.Module,
         y_labels = y.detach().cpu().numpy().tolist()
         loss = loss_fn(y_pred, y)
         train_loss += loss.item() 
+
         optimizer.zero_grad(set_to_none=True)
         loss.backward()
         optimizer.step()
+
         y_pred_class = torch.argmax(torch.softmax(y_pred, dim=1), dim=1)
         train_acc += (y_pred_class == y).sum().item()/len(y_pred)
         f1 = f1_score(y_labels, y_pred_class.detach().cpu().numpy().tolist(), average='weighted')
@@ -157,7 +160,7 @@ def valid_step(model: torch.nn.Module,
               dataloader: torch.utils.data.DataLoader, 
               loss_fn: torch.nn.Module,
               device: torch.device,
-              label: dict):
+              lr_scheduler):
     # Put model in eval mode
     model.eval() 
     
@@ -195,7 +198,7 @@ def inference(model, test_loader, label):
     model.to('cpu')
     preds = []
     with torch.no_grad():
-        for imgs in tqdm(iter(test_loader)):
+        for imgs, _ in tqdm(iter(test_loader)):
             imgs = imgs.to('cpu')
             pred = model(imgs)
             preds += pred.softmax(dim=1).argmax(1).detach().cpu().numpy().tolist()

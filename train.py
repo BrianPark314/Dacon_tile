@@ -15,6 +15,9 @@ print(f'Current device is: {device}')
 def go(model, train_data, validation_data, label):
     loss_fn = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(params=model.parameters(), lr=args.lr)
+    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer,
+                                                step_size = 5,
+                                                gamma = 0.75)
     from timeit import default_timer as timer 
     start_time = timer() 
 
@@ -28,7 +31,7 @@ def go(model, train_data, validation_data, label):
                         epochs=args.NUM_EPOCHS, 
                         patience=args.patience,
                         device=device, 
-                        desired_score=args.desired_score,
+                        lr_scheduler=lr_scheduler,
                         label=label)
 
     # End the timer and print out how long it took
