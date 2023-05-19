@@ -13,7 +13,7 @@ device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cp
 print(f'Current device is: {device}')
 
 def go(model, train_data, validation_data, label, weight):
-    loss_fn = nn.CrossEntropyLoss(weight)
+    loss_fn = nn.CrossEntropyLoss(weight.to(device))
     optimizer = torch.optim.Adam(params=model.parameters(), lr=args.lr)
     lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer,
                                                 step_size = 5,
