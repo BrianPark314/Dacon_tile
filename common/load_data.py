@@ -16,7 +16,6 @@ def get_train_dataloader(BATCH_SIZE, path, transform: transforms):
     train_data = datasets.ImageFolder(train_dir, transform)
     targets = train_data.targets
     _, weights = torch.unique(torch.tensor(targets), return_counts=True)
-    weights = weights/len(train_data)
 
     label = train_data.class_to_idx
     train_idx, valid_idx= train_test_split(
