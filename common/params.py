@@ -11,9 +11,8 @@ import os
 from torchvision.transforms.autoaugment import AutoAugmentPolicy
 
 args = easydict.EasyDict()
-args.BATCH_SIZE = 128
+args.BATCH_SIZE = 256
 args.NUM_EPOCHS = 100
-args.desired_score = 0.85
 args.imsize = 256
 args.enhanceparam = 10.0
 args.sharpnessfactor = 1.5

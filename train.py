@@ -12,7 +12,7 @@ device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cp
 
 print(f'Current device is: {device}')
 
-def go(model, train_data, validation_data, label):
+def go(model, train_data, validation_data, label, weight):
     loss_fn = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(params=model.parameters(), lr=args.lr)
     lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer,
@@ -53,14 +53,14 @@ if __name__ == '__main__':
 
     model.to(device)
     
-    train_data, validation_data, label = load_data.get_train_dataloader(args.BATCH_SIZE,
+    train_data, validation_data, label, weight = load_data.get_train_dataloader(args.BATCH_SIZE,
                                                           args.path, 
                                                           args.transform,
                                                           )
 
     print('Data preperation complete.')
     print('='*50)
-    model, results = go(model, train_data, validation_data, label)
+    model, results = go(model, train_data, validation_data, label, weight)
     print('Saving model...')
 
     torch.save(model.state_dict(), args.base_path / f'models/trained_models/{model.__class__.__name__}.pth')
