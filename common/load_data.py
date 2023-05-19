@@ -10,6 +10,20 @@ import sys
 sys.path.append(os.getcwd())
 from common.params import args
 import torch
+
+def make_weights(labels, nclasses):
+    labels = np.array(labels)   # where, unique 함수를 사용하기 위해 numpy로 변환한다.
+    weight_list = []   # 가중치를 저장하는 배열을 생성한다.
+ 
+    for cls in range(nclasses):
+        idx = np.where(labels == cls)[0]
+        count = len(idx)    #각 클래스 데이터 수 카운트 
+        weight = 1/count    
+        weights = [weight] * count    #라벨이 뽑힐 가중치를 1/count로 동일하게 전체 라벨에 할당 
+        weight_list += weights
+    
+    return weight_list
+    
     
 def get_train_dataloader(BATCH_SIZE, path, transform: transforms):
     train_dir = path / "_processed_train/"
@@ -29,7 +43,14 @@ def get_train_dataloader(BATCH_SIZE, path, transform: transforms):
     split_train = torch.utils.data.Subset(train_data, train_idx)
     split_valid = torch.utils.data.Subset(train_data, valid_idx)
 
-    tr_sampler = torch.utils.data.sampler.WeightedRandomSampler(weights, len(train_idx))
+    tr_label = [train_data.targets[i] for i in train_idx]
+    #val_label = [train_data.targets[i] for i in valid_idx]
+
+    tr_weights = torch.DoubleTensor(make_weights(tr_label,len(train_data.classes)))
+    #val_weights = torch.DoubleTensor(make_weights(val_label,len(train_data.classes)))
+
+    tr_sampler = torch.utils.data.sampler.WeightedRandomSampler(tr_weights, len(tr_weights))
+    #val_sampler = torch.utils.data.sampler.WeightedRandomSampler(val_weights, len(val_weights))
     
     print(f"Creating DataLoaders with batch size {BATCH_SIZE}.")
 
