@@ -21,18 +21,20 @@ def get_train_dataloader(BATCH_SIZE, path, transform: transforms):
     label = train_data.class_to_idx
     train_idx, valid_idx= train_test_split(
         np.arange(len(targets)),
-        test_size=0.1,
+        test_size=0.15,
         shuffle=True,
         stratify=targets,
         random_state=args.seed)
+    
+    split_train = torch.utils.data.Subset(train_data, train_idx)
+    split_valid = torch.utils.data.Subset(train_data, valid_idx)
 
     tr_sampler = torch.utils.data.sampler.WeightedRandomSampler(weights, len(train_idx))
-    val_sampler = torch.utils.data.sampler.WeightedRandomSampler(weights, len(valid_idx))
     
     print(f"Creating DataLoaders with batch size {BATCH_SIZE}.")
 
-    train_dataloader = DataLoader(train_data, batch_size=BATCH_SIZE, sampler = tr_sampler, num_workers=0)
-    valid_dataloader = DataLoader(train_data, batch_size=BATCH_SIZE, sampler = valid_idx, num_workers=0)
+    train_dataloader = DataLoader(split_train, batch_size=BATCH_SIZE, sampler = tr_sampler, num_workers=0)
+    valid_dataloader = DataLoader(split_valid, batch_size=BATCH_SIZE, num_workers=0)
 
     return train_dataloader, valid_dataloader, label, weights
 
